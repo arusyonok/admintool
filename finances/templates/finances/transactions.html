@@ -13,107 +13,102 @@
 
   <!-- Main content -->
   <section class="content">
-    <div  class="row">
-      <div class="col-md-3">
-
-        <div class="box box-primary">
-          <div class="box-header">
-            <h3 class="box-title">Date range</h3>
+    <div class="row">
+      <div class="col-md-12">
+        <div class="col-md-2">
+          <div class="input-group">
+            <button type="button" class="btn btn-default" id="daterange-btn">
+              <span>
+                <i class="fa fa-calendar"></i> Date range
+              </span>
+              <i class="fa fa-caret-down"></i>
+            </button>
+          </div>
+        </div>
+        <div class="col-md-2">
+          <select class="form-control select2" multiple="multiple" data-placeholder="Choose Categories">
+            {% for cat in categories %}
+            <option>{{ cat.name }}</option>
+            {% endfor %}
+          </select>
+        </div>
+        <div class="col-md-2">
+          <a href="{% url 'transactions' %}/?type=expense" class="btn btn-block btn-danger margin-bottom">Expenses</a>
+        </div>
+        <div class="col-md-2">
+          <a href="{% url 'transactions' %}/?type=income" class="btn btn-block btn-success margin-bottom">Incomes</a>
+        </div>
+        <div class="col-md-2">
+          <a href="{% url 'transactions' %}/?type=transfer" class="btn btn-block btn-warning margin-bottom">Transfers</a>
+        </div>
+        <div class="col-md-2">
+          <a href="{% url 'transactions' %}/add" class="btn btn-primary btn-block margin-bottom">Add Transaction</a>
+        </div>
+      </div>
+    </div>
+    <div class="row">
+      <div class="col-md-12">
+        <div class="box">
+          <div class="box-header with-border">
+            <h3 class="box-title">Chart</h3>
+            <div class="box-tools pull-right">
+              <button type="button" class="btn btn-box-tool" data-widget="collapse"><i class="fa fa-minus"></i></button>
+            </div>
           </div>
           <div class="box-body">
-            <!-- Date and time range -->
-            <div class="form-group">
-              <div class="input-group">
-                <button type="button" class="btn btn-default" id="daterange-btn">
-                  <span>
-                    <i class="fa fa-calendar"></i> Date range
-                  </span>
-                  <i class="fa fa-caret-down"></i>
-                </button>
-              </div>
+            <div class="chart">
+              <canvas id="lineChart" style="height:250px"></canvas>
             </div>
-            <!-- /.form group -->
           </div>
           <!-- /.box-body -->
         </div>
         <!-- /.box -->
+      </div>
+    </div>
+    <div class="row">
+      <div class="col-md-12">
         <div class="box box-primary">
           <div class="box-header with-border">
-            <h3 class="box-title">Categories</h3>
+            <i class="fa fa-euro"></i>
+            <h3 class="box-title">Transactions</h3>
           </div>
-          <!-- /.box-header -->
-          <div class="box-body">
-            <div class="form-group">
-              <select class="form-control select2" multiple="multiple" data-placeholder="Select a State">
-                <option>Alabama</option>
-                <option>Alaska</option>
-                <option>California</option>
-                <option>Delaware</option>
-                <option>Tennessee</option>
-                <option>Texas</option>
-                <option>Washington</option>
-              </select>
-            </div>
-            <!-- /.form-group -->
+          <div class="box-body table-responsive no-pad-top">
+            <table class="table table-hover">
+              <tr>
+                <th>ID</th>
+                <th>Date</th>
+                <th>Amount</th>
+                <th>Type</th>
+                <th>Category</th>
+                <th>Account</th>
+                <th>Account Type</th>
+                <th>Notes</th>
+              </tr>
+              {% for t in transactions %}
+              <tr>
+                <td>{{ t.id }}</td>
+                <td>{{ t.date }}</td>
+                <td>{{ t.amount }}</td>
+                <td>
+                  {% if t.type == 0 %}
+                  <span class="label label-danger">Expense</span></td>
+                  {% elif t.type == 1 %}
+                  <span class="label label-success">Income</span></td>
+                  {% elif t.type == 2 %}
+                  <span class="label label-warning">Transfer</span></td>
+                  {% endif %}
+                <td>{{ t.category }}</td>
+                <td>{{ t.account }}</td>
+                <td>{{ t.account.type }}</td>
+                <td>{{ t.notes }}</td>
+              </tr>
+              {% endfor %}
+            </table>
           </div>
-          <!-- /.box-body -->
         </div>
-        <!-- /.box -->
-        <a href="#" class="btn btn-primary btn-block margin-bottom">Add Transaction</a>
       </div>
-      <!-- /.col -->
-      <div class="col-md-9">
-        <div class="row">
-          <div class="col-md-4">
-          <a href="#" class="btn btn-block btn-danger margin-bottom">Expenses</a>
-        </div>
-        <div class="col-md-4">
-          <a href="#" class="btn btn-block btn-success margin-bottom">Incomes</a>
-        </div>
-        <div class="col-md-4">
-          <a href="#" class="btn btn-block btn-warning margin-bottom">Transfers</a>
-        </div>
-
-        </div>
-
-        <div class="box box-primary">
-            <div class="box-header with-border">
-              <i class="fa fa-euro"></i>
-              <h3 class="box-title">Transactions</h3>
-            </div>
-            <div class="box-body table-responsive no-pad-top">
-              <table class="table table-hover">
-                <tr>
-                  <th>ID</th>
-                  <th>Date</th>
-                  <th>Amount</th>
-                  <th>Type</th>
-                  <th>Parent Category</th>
-                  <th>Category</th>
-                  <th>Account</th>
-                  <th>Account Type</th>
-                  <th>Notes</th>
-                </tr>
-                {% for t in transactions %}
-                <tr>
-                  <td>{{ t.id }}</td>
-                  <td>{{ t.date }}</td>
-                  <td>{{ t.amount }}</td>
-                  <td><span class="label label-success"{{ t.type }}></span></td>
-                  <td>{{ t.category.parent }}</td>
-                  <td>{{ t.category }}</td>
-                  <td>{{ t.account }}</td>
-                  <td>{{ t.account.type }}</td>
-                  <td>{{ t.notes }}</td>
-                </tr>
-                {% endfor %}
-              </table>
-            </div>
-            <!-- /.box-body -->
-          </div>
-      </div>
-      <!-- /.col -->
     </div>
   </section>
   <!-- /.content -->
+
 {% endblock %}

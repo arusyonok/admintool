@@ -14,26 +14,26 @@
   <!-- Main content -->
   <section class="content">
     <div  class="row">
-       <div class="col-md-12">
-
-          <!-- Custom Tabs -->
-          <div class="nav-tabs-custom">
-            <ul class="nav nav-tabs">
-              <li class="active"><a href="#tab_1" data-toggle="tab">Expense</a></li>
-              <li><a href="#tab_2" data-toggle="tab">Income</a></li>
-            </ul>
-            <div class="tab-content">
-              <div class="tab-pane active" id="tab_1">
-              </div>
-              <!-- /.tab-pane -->
-              <div class="tab-pane" id="tab_2"></div>
-              <!-- /.tab-pane -->
-            </div>
-            <!-- /.tab-content -->
+      <div class="col-md-6">
+        <div class="box">
+           <div class="box-header with-border">
+            <h3 class="box-title">Categories</h3>
           </div>
-          <!-- nav-tabs-custom -->
+          <div class="box-body">
+            <ul>
+            {% for parent, cat in expense_cat.items %}
+              <li><span>{{ parent }}</span>
+                <ul>
+                {% for d in cat %}
+                  <li>{{ d }}</li>
+                {% endfor %}
+                </ul>
+              </li>
+            {% endfor %}
+            </ul>
+          </div>
         </div>
-        <!-- /.col -->
+      </div>
     </div>
   </section>
   <!-- /.content -->
