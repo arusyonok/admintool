@@ -47,7 +47,7 @@ class AccountType(models.Model):
 
 class Account(models.Model):
     name = models.CharField(max_length=50)
-    type = models.ForeignKey(AccountType)
+    type = models.ForeignKey(AccountType, on_delete=models.CASCADE)
 
     def __str__(self):
         return self.name
@@ -57,8 +57,8 @@ class Transaction(models.Model):
     type = models.IntegerField(choices=TRANSACTION_TYPES)
     date = models.DateTimeField(auto_now_add=True)
     amount = models.FloatField()
-    category = models.ForeignKey(Category)
-    account = models.ForeignKey(Account)
+    category = models.ForeignKey(Category, on_delete=models.CASCADE)
+    account = models.ForeignKey(Account, on_delete=models.CASCADE)
     notes = models.TextField()
 
 
@@ -71,7 +71,7 @@ class Budget(models.Model):
     repeats = models.BooleanField()
     repeat_start = models.DateField(auto_now_add=True)
     repeat_end = models.DateField(auto_now_add=True)
-    category = models.ForeignKey(Category, blank=True, null=True)
+    category = models.ForeignKey(Category, blank=True, null=True, on_delete=models.CASCADE)
 
     def __str__(self):
         return self.name
