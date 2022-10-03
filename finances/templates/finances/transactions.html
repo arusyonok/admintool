@@ -26,13 +26,6 @@
           </div>
         </div>
         <div class="col-md-2">
-          <select class="form-control select2" multiple="multiple" data-placeholder="Choose Categories">
-            {% for cat in categories %}
-            <option>{{ cat.name }}</option>
-            {% endfor %}
-          </select>
-        </div>
-        <div class="col-md-2">
           <a href="{% url 'transactions' %}/?type=expense" class="btn btn-block btn-danger margin-bottom">Expenses</a>
         </div>
         <div class="col-md-2">
