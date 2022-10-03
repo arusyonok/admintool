@@ -19,15 +19,6 @@ CATEGORY_TYPES = (
     (1, 'Income')
 )
 
-BUDGET_TYPE = (
-    (0, 'Daily'),
-    (1, 'Weekly'),
-    (2, 'Monthly'),
-    (3, 'Yearly'),
-    (4, 'Custom'),
-)
-
-
 class Category(models.Model):
     name = models.CharField(max_length=50)
     type = models.IntegerField(choices=CATEGORY_TYPES)
@@ -60,18 +51,3 @@ class Transaction(models.Model):
     category = models.ForeignKey(Category, on_delete=models.CASCADE)
     account = models.ForeignKey(Account, on_delete=models.CASCADE)
     notes = models.TextField()
-
-
-class Budget(models.Model):
-    name = models.CharField(max_length=50)
-    amount = models.FloatField()
-    type = models.IntegerField(choices=BUDGET_TYPE)
-    start = models.DateField(auto_now_add=True)
-    end = models.DateField(auto_now_add=True)
-    repeats = models.BooleanField()
-    repeat_start = models.DateField(auto_now_add=True)
-    repeat_end = models.DateField(auto_now_add=True)
-    category = models.ForeignKey(Category, blank=True, null=True, on_delete=models.CASCADE)
-
-    def __str__(self):
-        return self.name

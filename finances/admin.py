@@ -17,6 +17,5 @@ class CategoryAdmin(admin.ModelAdmin):
 admin.site.register(Category, CategoryAdmin)
 admin.site.register(AccountType)
 admin.site.register(Account)
-admin.site.register(Budget)
 admin.site.register(Transaction, TransactionAdmin)
 

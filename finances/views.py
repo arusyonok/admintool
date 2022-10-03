@@ -41,7 +41,3 @@ def Categories(request):
 
 def Trends(request):
     return render(request, 'finances/trends.html', {})
-
-
-def Budget(request):
-    return render(request, 'finances/budget.html', {})
