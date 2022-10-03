@@ -29,25 +29,9 @@ class Category(models.Model):
         return self.name
 
 
-class AccountType(models.Model):
-    name = models.CharField(max_length=50)
-
-    def __str__(self):
-        return self.name
-
-
-class Account(models.Model):
-    name = models.CharField(max_length=50)
-    type = models.ForeignKey(AccountType, on_delete=models.CASCADE)
-
-    def __str__(self):
-        return self.name
-
-
 class Transaction(models.Model):
     type = models.IntegerField(choices=TRANSACTION_TYPES)
     date = models.DateTimeField(auto_now_add=True)
     amount = models.FloatField()
     category = models.ForeignKey(Category, on_delete=models.CASCADE)
-    account = models.ForeignKey(Account, on_delete=models.CASCADE)
     notes = models.TextField()

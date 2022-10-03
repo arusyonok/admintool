@@ -80,8 +80,6 @@
                 <th>Amount</th>
                 <th>Type</th>
                 <th>Category</th>
-                <th>Account</th>
-                <th>Account Type</th>
                 <th>Notes</th>
               </tr>
               {% for t in transactions %}
@@ -98,8 +96,6 @@
                   <span class="label label-warning">Transfer</span></td>
                   {% endif %}
                 <td>{{ t.category }}</td>
-                <td>{{ t.account }}</td>
-                <td>{{ t.account.type }}</td>
                 <td>{{ t.notes }}</td>
               </tr>
               {% endfor %}
