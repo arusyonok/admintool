@@ -14,16 +14,22 @@ TRANSACTION_TYPE_ID = (
     ('transfer', 2),
 )
 
-CATEGORY_TYPES = (
+RECORD_TYPES = (
     (0, 'Expense'),
-    (1, 'Income')
+    (1, 'Income'),
+    (2, "Transfer")
 )
 
 class Category(models.Model):
     name = models.CharField(max_length=50)
-    type = models.IntegerField(choices=CATEGORY_TYPES)
-    parent = models.IntegerField(blank=True, null=True)
-    is_parent = models.BooleanField()
+    type = models.IntegerField(choices=RECORD_TYPES, default=0) # TODO: fix this default
+
+    def __str__(self):
+        return self.name
+
+class SubCategory(models.Model):
+    name = models.CharField(max_length=50)
+    parent = models.ForeignKey(Category, on_delete=models.CASCADE)
 
     def __str__(self):
         return self.name
