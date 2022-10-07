@@ -6,5 +6,4 @@ urlpatterns = [
     url(r'^$', views.Dashboard, name='dashboard'),
     url(r'dashboard', views.Dashboard, name='dashboard'),
     url(r'transactions', views.Transactions, name='transactions'),
-    url(r'trends', views.Trends, name='trends'),
 ]

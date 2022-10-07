@@ -16,7 +16,3 @@ def Transactions(request):
 
     context = {'transactions': transactions}
     return render(request, 'finances/transactions.html', context)
-
-
-def Trends(request):
-    return render(request, 'finances/trends.html', {})
