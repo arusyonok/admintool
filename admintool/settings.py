@@ -32,6 +32,8 @@ ALLOWED_HOSTS = []
 
 INSTALLED_APPS = [
     'finances.apps.FinancesConfig',
+    'catalog.apps.CatalogConfig',
+    'authorization.apps.AuthorizationConfig',
     'django.contrib.admin',
     'django.contrib.auth',
     'django.contrib.contenttypes',

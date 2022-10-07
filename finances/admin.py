@@ -4,26 +4,6 @@ from django.contrib import admin
 from .models import *
 
 
-class CategoryAdmin(admin.ModelAdmin):
-    list_display = ('name', 'type')
-
-
-class SubCategoryAdmin(admin.ModelAdmin):
-    list_display = ('name', 'parent')
-
-
-class UserAdmin(admin.ModelAdmin):
-    list_display = ('username', 'first_name', 'last_name')
-
-
-class SpendingGroupAdmin(admin.ModelAdmin):
-    list_display = ('title', 'group_members')
-
-    def group_members(self, obj):
-        return ", ".join([f"{user}" for user in obj.users.all()])
-
-
-
 class PersonalRecordAdmin(admin.ModelAdmin):
     list_display = ('title', 'amount', 'date', 'sub_category', 'type', 'user')
 
@@ -69,7 +49,3 @@ class SpendingGroupRecordAdmin(admin.ModelAdmin):
 
 admin.site.register(SpendingGroupRecord, SpendingGroupRecordAdmin)
 admin.site.register(PersonalRecord, PersonalRecordAdmin)
-admin.site.register(User, UserAdmin)
-admin.site.register(SpendingGroup, SpendingGroupAdmin)
-admin.site.register(Category, CategoryAdmin)
-admin.site.register(SubCategory, SubCategoryAdmin)
