@@ -2,18 +2,6 @@ from django.db import models
 from django.contrib import admin
 
 
-TRANSACTION_TYPES = (
-    (0, 'Expense'),
-    (1, 'Income'),
-    (2, 'Transfer'),
-)
-
-TRANSACTION_TYPE_ID = (
-    ('expense', 0),
-    ('income', 1),
-    ('transfer', 2),
-)
-
 RECORD_TYPES = (
     (0, 'Expense'),
     (1, 'Income'),
@@ -60,9 +48,28 @@ class SubCategory(models.Model):
         return self.name
 
 
-class Transaction(models.Model):
-    type = models.IntegerField(choices=TRANSACTION_TYPES)
+class AbstractRecord(models.Model):
+    title = models.CharField(max_length=50)
+    amount = models.DecimalField(decimal_places=2, max_digits=10)
     date = models.DateTimeField(auto_now_add=True)
-    amount = models.FloatField()
-    category = models.ForeignKey(Category, on_delete=models.CASCADE)
-    notes = models.TextField()
+    sub_category = models.ForeignKey(SubCategory, on_delete=models.SET_NULL, null=True)
+
+    created_at = models.DateTimeField(auto_now_add=True)
+    updated_at = models.DateTimeField(auto_now=True)
+
+    class Meta:
+        abstract = True
+
+
+class PersonalRecord(AbstractRecord):
+    type = models.IntegerField(choices=RECORD_TYPES)
+    user = models.ForeignKey(User, on_delete=models.CASCADE)
+
+
+class SpendingGroupRecord(AbstractRecord):
+    group = models.ForeignKey(SpendingGroup, on_delete=models.CASCADE)
+    paid_by = models.ForeignKey(User, related_name="paid_by_me_set", on_delete=models.SET_NULL, null=True)
+    paid_for_users = models.ManyToManyField(User, related_name="paid_for_me_set")
+
+    def is_group(self):
+        return False if self.group_id is None else True
