@@ -19,7 +19,8 @@ from finances import views as f_views
 from core import views as a_views
 
 urlpatterns = [
+    url(r'^$', a_views.index, name='index'),
+    url(r'dashboard', a_views.index, name='dashboard'),
     url(r'^admin/', admin.site.urls),
     url(r'^finances/', include('finances.urls')),
-    url(r'^$', a_views.index, name='index'),
 ]

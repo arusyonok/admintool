@@ -1,12 +1,17 @@
-from django.http import HttpResponse
-from django.shortcuts import get_object_or_404, render
-from .models import PersonalRecord
-
-def Dashboard(request):
-    return render(request, 'finances/dashboard.html', {})
+from django.views.generic import TemplateView
 
 
-def Transactions(request):
-    transactions = PersonalRecord.objects.all()
-    context = {'transactions': transactions}
-    return render(request, 'finances/transactions.html', context)
+class PersonalExpenseView(TemplateView):
+    template_name = 'finances/personal_expenses.html'
+
+
+class PersonalIncomeView(TemplateView):
+    template_name = 'finances/personal_incomes.html'
+
+
+class GroupExpensesView(TemplateView):
+    template_name = 'finances/group_expenses.html'
+
+
+class GroupBalanceView(TemplateView):
+    template_name = 'finances/group_balance.html'
