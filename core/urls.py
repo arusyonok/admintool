@@ -1,4 +1,4 @@
-"""admintool URL Configuration
+"""core URL Configuration
 
 The `urlpatterns` list routes URLs to views. For more information please see:
     https://docs.djangoproject.com/en/1.11/topics/http/urls/
@@ -16,7 +16,7 @@ Including another URLconf
 from django.urls import re_path as url, include
 from django.contrib import admin
 from finances import views as f_views
-from admintool import views as a_views
+from core import views as a_views
 
 urlpatterns = [
     url(r'^admin/', admin.site.urls),
