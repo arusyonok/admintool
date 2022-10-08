@@ -1,14 +1,15 @@
 from django.db import models
 from django.contrib import admin
-from catalog.common import RECORD_TYPES
+from catalog.common import RecordTypes
 
 
 class Category(models.Model):
     name = models.CharField(max_length=50)
-    type = models.IntegerField(choices=RECORD_TYPES, default=0) # TODO: fix this default
+    type = models.IntegerField(choices=RecordTypes.CHOICES, default=0)
 
     def __str__(self):
         return self.name
+
 
 class SubCategory(models.Model):
     name = models.CharField(max_length=50)

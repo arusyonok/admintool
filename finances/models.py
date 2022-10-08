@@ -1,7 +1,7 @@
 from django.db import models
 from django.contrib import admin
 from authorization.models import User, SpendingGroup
-from catalog.common import RECORD_TYPES
+from catalog.common import RecordTypes
 from catalog.models import SubCategory
 
 
@@ -19,7 +19,7 @@ class AbstractRecord(models.Model):
 
 
 class PersonalRecord(AbstractRecord):
-    type = models.IntegerField(choices=RECORD_TYPES)
+    type = models.IntegerField(choices=RecordTypes.CHOICES)
     user = models.ForeignKey(User, on_delete=models.CASCADE)
 
 
