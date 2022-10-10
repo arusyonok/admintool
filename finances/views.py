@@ -1,8 +1,8 @@
-from django.views.generic import TemplateView, CreateView, FormView
+from django.views.generic import TemplateView, CreateView, UpdateView
 from catalog.common import RecordTypes
 from catalog.models import Category
 from .models import PersonalRecord
-from .forms import PersonalExpenseCreateForm
+from .forms import PersonalExpenseCreateForm, PersonalExpenseUpdateForm
 
 
 class PersonalExpenseCreateView(CreateView):
@@ -14,6 +14,19 @@ class PersonalExpenseCreateView(CreateView):
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
         context['categories'] = Category.objects.filter(type=RecordTypes.EXPENSE)
+        return context
+
+
+class PersonalExpenseUpdateView(UpdateView):
+    model = PersonalRecord
+    form_class = PersonalExpenseUpdateForm
+    template_name = 'finances/personal_expenses_edit.html'
+    success_url = "personal_expenses"
+
+    def get_context_data(self, **kwargs):
+        context = super().get_context_data(**kwargs)
+        context['categories'] = Category.objects.filter(type=RecordTypes.EXPENSE)
+        context['parent_category'] = self.object.category
         return context
 
 

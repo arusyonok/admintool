@@ -17,6 +17,10 @@ class AbstractRecord(models.Model):
     class Meta:
         abstract = True
 
+    @property
+    def category(self):
+        return self.sub_category.parent
+
 
 class PersonalRecord(AbstractRecord):
     type = models.IntegerField(choices=RecordTypes.CHOICES)

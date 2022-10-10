@@ -1,0 +1,90 @@
+{% extends "index.html" %}
+
+{% block content %}
+    <!-- Content Header (Page header) -->
+    <section class="content-header">
+      <div class="container-fluid">
+        <div class="row mb-2">
+          <div class="col-sm-6">
+            <h1>Edit Expense</h1>
+          </div>
+          <div class="col-sm-6">
+            <ol class="breadcrumb float-sm-right">
+              <li class="breadcrumb-item"><a href="#">Home</a></li>
+              <li class="breadcrumb-item active">Edit Expense</li>
+            </ol>
+          </div>
+        </div>
+      </div><!-- /.container-fluid -->
+    </section>
+
+    <!-- Main content -->
+    <section class="content">
+      <div class="container-fluid">
+        <div class="row">
+          <!-- left column -->
+          <div class="col-md-6">
+            <!-- general form elements -->
+            <div class="card card-success">
+              <div class="card-header">
+                <h3 class="card-title">Edit Expense</h3>
+              </div>
+              <!-- /.card-header -->
+              <!-- form start -->
+              <form method="post">
+                {% csrf_token %}
+                <div class="card-body">
+                  <div class="form-group">
+                    <label for="{{ form.title.id_for_label }}">Title</label>
+                    <input type="text" class="form-control" id="{{ form.title.id_for_label }}"
+                           name="{{ form.title.name }}" placeholder="Title" value="{{ form.title.value }}">
+                  </div>
+                  <div class="form-group">
+                    <label for="{{ form.amount.id_for_label }}">Price</label>
+                    <input type="text" class="form-control" id="{{ form.amount.id_for_label }}"
+                           name="{{ form.amount.name }}" placeholder="Price"  value="{{ form.amount.value }}">
+                  </div>
+                  <div class="form-group">
+                    <label for="category_select">Category</label>
+                    <select class="custom-select form-control" id="category_select">
+                      <option selected>---------</option>
+                      {% for category in categories %}
+                      <option value="{{ category.id }}"
+                              {% if category.id == parent_category.id %} selected {% endif %}>
+                        {{ category }}
+                      </option>
+                      {% endfor %}
+                    </select>
+                  </div>
+                  <div class="form-group">
+                    <label for="id_sub_category">Sub Category</label>
+                    <select class="custom-select form-control" id="id_sub_category" name="{{ form.sub_category.name }}">
+                      <option value="first" selected>---------</option>
+                      {% for sub in form.sub_category.field.queryset %}
+                      <option value="{{ sub.id }}"
+                              {% if sub.id == form.sub_category.value %} selected {% endif %}
+                              parent_id="{{ sub.parent.id }}" >{{ sub }}</option>
+                      {% endfor %}
+                    </select>
+                  </div>
+                </div>
+                <!-- /.card-body -->
+                <div class="card-footer">
+                  <button type="submit" class="btn btn-primary">Submit</button>
+                </div>
+              </form>
+            </div>
+            <!-- /.card -->
+
+          </div>
+          <!--/.col (left) -->
+
+          </div>
+          <!--/.col (right) -->
+        </div>
+        <!-- /.row -->
+      </div><!-- /.container-fluid -->
+    </section>
+    <!-- /.content -->
+
+{% endblock %}
