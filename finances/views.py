@@ -42,6 +42,13 @@ class ExpenseCreateView(PersonalRecordCreateView):
     record_type = RecordTypes.EXPENSE
 
 
+class IncomeCreateView(PersonalRecordCreateView):
+    form_class = forms.IncomeCreateForm
+    template_name = 'finances/personal_incomes_add.html'
+    success_url = reverse_lazy("personal_incomes")
+    record_type = RecordTypes.INCOME
+
+
 class PersonalRecordUpdateView(views.UpdateView):
     model = PersonalRecord
     record_type = None
@@ -60,12 +67,23 @@ class ExpenseUpdateView(PersonalRecordUpdateView):
     record_type = RecordTypes.EXPENSE
 
 
+class IncomeUpdateView(PersonalRecordUpdateView):
+    form_class = forms.IncomeUpdateForm
+    template_name = 'finances/personal_incomes_edit.html'
+    success_url = reverse_lazy("personal_incomes")
+    record_type = RecordTypes.INCOME
+
+
 class PersonalRecordDeleteView(views.DeleteView):
     model = PersonalRecord
 
 
 class ExpenseDeleteView(PersonalRecordDeleteView):
     success_url = reverse_lazy("personal_expenses")
+
+
+class IncomeDeleteView(PersonalRecordDeleteView):
+    success_url = reverse_lazy("personal_incomes")
 
 
 class GroupExpensesView(views.TemplateView):

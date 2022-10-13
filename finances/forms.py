@@ -25,6 +25,14 @@ class ExpenseCreateForm(PersonalRecordCreateForm):
         return RecordTypes.EXPENSE
 
 
+class IncomeCreateForm(PersonalRecordCreateForm):
+    sub_category = forms.ModelChoiceField(queryset=SubCategory.objects.filter(parent__type=RecordTypes.INCOME),
+                                          required=False)
+
+    def clean_type(self):
+        return RecordTypes.INCOME
+
+
 class PersonalRecordUpdateForm(forms.ModelForm):
     type = forms.CharField(widget=forms.HiddenInput(), required=False)
     user = forms.CharField(widget=forms.HiddenInput(), required=False)
@@ -43,3 +51,11 @@ class ExpenseUpdateForm(PersonalRecordUpdateForm):
 
     def clean_type(self):
         return RecordTypes.EXPENSE
+
+
+class IncomeUpdateForm(PersonalRecordUpdateForm):
+    sub_category = forms.ModelChoiceField(queryset=SubCategory.objects.filter(parent__type=RecordTypes.INCOME),
+                                          required=False)
+
+    def clean_type(self):
+        return RecordTypes.INCOME
