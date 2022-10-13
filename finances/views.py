@@ -6,49 +6,66 @@ from .models import PersonalRecord
 from . import forms
 
 
-class PersonalExpenseCreateView(views.CreateView):
-    model = PersonalRecord
-    form_class = forms.PersonalExpenseCreateForm
-    template_name = 'finances/personal_expenses_add.html'
-    success_url = "personal_expenses"
+class PersonalRecordView(views.TemplateView):
+    record_type = None
 
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
-        context['categories'] = Category.objects.filter(type=RecordTypes.EXPENSE)
+        context['records'] = PersonalRecord.objects.filter(type=self.record_type)
         return context
 
 
-class PersonalExpenseUpdateView(views.UpdateView):
+class ExpenseView(PersonalRecordView):
+    template_name = 'finances/personal_expenses.html'
+    record_type = RecordTypes.EXPENSE
+
+
+class IncomeView(PersonalRecordView):
+    template_name = 'finances/personal_incomes.html'
+    record_type = RecordTypes.INCOME
+
+
+class PersonalRecordCreateView(views.CreateView):
     model = PersonalRecord
-    form_class = forms.PersonalExpenseUpdateForm
-    template_name = 'finances/personal_expenses_edit.html'
-    success_url = "personal_expenses"
+    record_type = None
 
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
-        context['categories'] = Category.objects.filter(type=RecordTypes.EXPENSE)
+        context['categories'] = Category.objects.filter(type=self.record_type)
+        return context
+
+
+class ExpenseCreateView(PersonalRecordCreateView):
+    form_class = forms.ExpenseCreateForm
+    template_name = 'finances/personal_expenses_add.html'
+    success_url = reverse_lazy("personal_expenses")
+    record_type = RecordTypes.EXPENSE
+
+
+class PersonalRecordUpdateView(views.UpdateView):
+    model = PersonalRecord
+    record_type = None
+
+    def get_context_data(self, **kwargs):
+        context = super().get_context_data(**kwargs)
+        context['categories'] = Category.objects.filter(type=self.record_type)
         context['parent_category'] = self.object.category
         return context
 
 
-class PersonalExpenseDeleteView(views.DeleteView):
-    model = PersonalRecord
+class ExpenseUpdateView(PersonalRecordUpdateView):
+    form_class = forms.ExpenseUpdateForm
+    template_name = 'finances/personal_expenses_edit.html'
     success_url = reverse_lazy("personal_expenses")
-    template_name = "finances/personal_expenses_delete.html"
+    record_type = RecordTypes.EXPENSE
 
 
-class PersonalExpenseView(views.TemplateView):
-    template_name = 'finances/personal_expenses.html'
-
-    def get_context_data(self, **kwargs):
-        context = super().get_context_data(**kwargs)
-        context['expenses'] = PersonalRecord.objects.filter(type=RecordTypes.EXPENSE)
-        return context
+class PersonalRecordDeleteView(views.DeleteView):
+    model = PersonalRecord
 
 
-class PersonalIncomeView(views.TemplateView):
-    template_name = 'finances/personal_incomes.html'
-
+class ExpenseDeleteView(PersonalRecordDeleteView):
+    success_url = reverse_lazy("personal_expenses")
 
 
 class GroupExpensesView(views.TemplateView):

@@ -52,7 +52,7 @@
                   </tr>
                 </thead>
                 <tbody>
-                  {% for expense in expenses %}
+                  {% for expense in records %}
                   <tr>
                     <td>{{ expense.title }}</td>
                     <td>{{ expense.amount }}</td>
@@ -92,7 +92,7 @@
     </div><!-- /.container-fluid -->
   </section>
   <!-- /.content -->
-  {% include "finances/personal_expenses_delete.html" %}
+  {% include "finances/delete_confirmation.html" %}
 
 {% endblock %}
 
