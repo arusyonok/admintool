@@ -1,4 +1,4 @@
-from django.views.generic import TemplateView, CreateView, DeleteView, UpdateView
+from django.views import generic as views
 from django.urls import reverse_lazy
 from catalog.common import RecordTypes
 from catalog.models import Category
@@ -6,7 +6,7 @@ from .models import PersonalRecord
 from .forms import PersonalExpenseCreateForm, PersonalExpenseUpdateForm
 
 
-class PersonalExpenseCreateView(CreateView):
+class PersonalExpenseCreateView(views.CreateView):
     model = PersonalRecord
     form_class = PersonalExpenseCreateForm
     template_name = 'finances/personal_expenses_add.html'
@@ -18,7 +18,7 @@ class PersonalExpenseCreateView(CreateView):
         return context
 
 
-class PersonalExpenseUpdateView(UpdateView):
+class PersonalExpenseUpdateView(views.UpdateView):
     model = PersonalRecord
     form_class = PersonalExpenseUpdateForm
     template_name = 'finances/personal_expenses_edit.html'
@@ -30,13 +30,14 @@ class PersonalExpenseUpdateView(UpdateView):
         context['parent_category'] = self.object.category
         return context
 
-class PersonalExpenseDeleteView(DeleteView):
+
+class PersonalExpenseDeleteView(views.DeleteView):
     model = PersonalRecord
     success_url = reverse_lazy("personal_expenses")
     template_name = "finances/personal_expenses_delete.html"
 
 
-class PersonalExpenseView(TemplateView):
+class PersonalExpenseView(views.TemplateView):
     template_name = 'finances/personal_expenses.html'
 
     def get_context_data(self, **kwargs):
@@ -45,13 +46,14 @@ class PersonalExpenseView(TemplateView):
         return context
 
 
-class PersonalIncomeView(TemplateView):
+class PersonalIncomeView(views.TemplateView):
     template_name = 'finances/personal_incomes.html'
 
 
-class GroupExpensesView(TemplateView):
+
+class GroupExpensesView(views.TemplateView):
     template_name = 'finances/group_expenses.html'
 
 
-class GroupBalanceView(TemplateView):
+class GroupBalanceView(views.TemplateView):
     template_name = 'finances/group_balance.html'
