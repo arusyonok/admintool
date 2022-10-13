@@ -3,12 +3,12 @@ from django.urls import reverse_lazy
 from catalog.common import RecordTypes
 from catalog.models import Category
 from .models import PersonalRecord
-from .forms import PersonalExpenseCreateForm, PersonalExpenseUpdateForm
+from . import forms
 
 
 class PersonalExpenseCreateView(views.CreateView):
     model = PersonalRecord
-    form_class = PersonalExpenseCreateForm
+    form_class = forms.PersonalExpenseCreateForm
     template_name = 'finances/personal_expenses_add.html'
     success_url = "personal_expenses"
 
@@ -20,7 +20,7 @@ class PersonalExpenseCreateView(views.CreateView):
 
 class PersonalExpenseUpdateView(views.UpdateView):
     model = PersonalRecord
-    form_class = PersonalExpenseUpdateForm
+    form_class = forms.PersonalExpenseUpdateForm
     template_name = 'finances/personal_expenses_edit.html'
     success_url = "personal_expenses"
 
