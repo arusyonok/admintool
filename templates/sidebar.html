@@ -34,11 +34,11 @@
           </li>
           <li class="nav-item"></li>
           <li class="nav-item
-          {% if 'personal_expenses' in url_name  %}menu-open{% endif %}
-          {% if 'personal_incomes' in url_name %}menu-open{% endif %}">
+          {% if 'personal-expenses' in url_name  %}menu-open{% endif %}
+          {% if 'personal-incomes' in url_name %}menu-open{% endif %}">
             <a href="#" class="nav-link
-                        {% if 'personal_expenses' in url_name %}active{% endif %}
-                        {% if 'personal_incomes' in url_name %}active{% endif %}">
+                        {% if 'personal-expenses' in url_name %}active{% endif %}
+                        {% if 'personal-incomes' in url_name %}active{% endif %}">
               <i class="nav-icon fas fa-coins"></i>
               <p>
                 Personal Records
@@ -47,15 +47,15 @@
             </a>
             <ul class="nav nav-treeview">
               <li class="nav-item">
-                <a href="{% url 'personal_expenses' %}"
-                   class="nav-link {% if 'personal_expenses' in url_name %}active{% endif %}">
+                <a href="{% url 'personal-expenses' %}"
+                   class="nav-link {% if 'personal-expenses' in url_name %}active{% endif %}">
                   <i class="far fa-circle nav-icon"></i>
                   <p>Expenses</p>
                 </a>
               </li>
               <li class="nav-item">
-                <a href="{% url 'personal_incomes' %}"
-                   class="nav-link {% if 'personal_incomes' in url_name %}active{% endif %}">
+                <a href="{% url 'personal-incomes' %}"
+                   class="nav-link {% if 'personal-incomes' in url_name %}active{% endif %}">
                   <i class="far fa-circle nav-icon"></i>
                   <p>Incomes</p>
                 </a>
