@@ -21,13 +21,13 @@ class PersonalRecordView(views.TemplateView, HeaderClass):
 
 
 class ExpenseView(PersonalRecordView):
-    template_name = 'finances/personal_expenses.html'
+    template_name = 'finances/personal_records/expenses.html'
     record_type = RecordTypes.EXPENSE
     header_title = "Personal Expenses"
 
 
 class IncomeView(PersonalRecordView):
-    template_name = 'finances/personal_incomes.html'
+    template_name = 'finances/personal_records/incomes.html'
     record_type = RecordTypes.INCOME
     header_title = "Personal Incomes"
 
@@ -45,7 +45,7 @@ class PersonalRecordCreateView(views.CreateView, HeaderClass):
 
 class ExpenseCreateView(PersonalRecordCreateView):
     form_class = forms.ExpenseCreateForm
-    template_name = 'finances/personal_expenses_add.html'
+    template_name = 'finances/personal_records/expense_add.html'
     success_url = reverse_lazy("personal-expenses")
     record_type = RecordTypes.EXPENSE
     header_title = "Add Expense"
@@ -53,7 +53,7 @@ class ExpenseCreateView(PersonalRecordCreateView):
 
 class IncomeCreateView(PersonalRecordCreateView):
     form_class = forms.IncomeCreateForm
-    template_name = 'finances/personal_incomes_add.html'
+    template_name = 'finances/personal_records/income_add.html'
     success_url = reverse_lazy("personal-incomes")
     record_type = RecordTypes.INCOME
     header_title = "Add Income"
@@ -73,7 +73,7 @@ class PersonalRecordUpdateView(views.UpdateView, HeaderClass):
 
 class ExpenseUpdateView(PersonalRecordUpdateView):
     form_class = forms.ExpenseUpdateForm
-    template_name = 'finances/personal_expenses_edit.html'
+    template_name = 'finances/personal_records/expense_edit.html'
     success_url = reverse_lazy("personal-expenses")
     record_type = RecordTypes.EXPENSE
     header_title = "Edit Expense"
@@ -81,7 +81,7 @@ class ExpenseUpdateView(PersonalRecordUpdateView):
 
 class IncomeUpdateView(PersonalRecordUpdateView):
     form_class = forms.IncomeUpdateForm
-    template_name = 'finances/personal_incomes_edit.html'
+    template_name = 'finances/personal_records/income_edit.html'
     success_url = reverse_lazy("personal-incomes")
     record_type = RecordTypes.INCOME
     header_title = "Edit Income"
