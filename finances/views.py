@@ -1,4 +1,5 @@
-from django.views.generic import TemplateView, CreateView, UpdateView
+from django.views.generic import TemplateView, CreateView, DeleteView, UpdateView
+from django.urls import reverse_lazy
 from catalog.common import RecordTypes
 from catalog.models import Category
 from .models import PersonalRecord
@@ -28,6 +29,11 @@ class PersonalExpenseUpdateView(UpdateView):
         context['categories'] = Category.objects.filter(type=RecordTypes.EXPENSE)
         context['parent_category'] = self.object.category
         return context
+
+class PersonalExpenseDeleteView(DeleteView):
+    model = PersonalRecord
+    success_url = reverse_lazy("personal_expenses")
+    template_name = "finances/personal_expenses_delete.html"
 
 
 class PersonalExpenseView(TemplateView):
