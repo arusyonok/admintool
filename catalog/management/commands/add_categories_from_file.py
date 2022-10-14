@@ -28,8 +28,7 @@ class Command(BaseCommand):
 
     def handle(self, *args, **options):
         category_data, sub_category_data = self._read_file()
-        import pdb
-        pdb.set_trace()
+
         self._create_categories(category_data)
         self._create_sub_categories(sub_category_data)
 
