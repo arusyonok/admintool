@@ -1,6 +1,5 @@
 from django.db import models
-from django.contrib import admin
-from authorization.models import User, SpendingGroup
+from accounts.models import Profile, GroupAccount
 from catalog.common import RecordTypes
 from catalog.models import SubCategory
 
@@ -24,13 +23,13 @@ class AbstractRecord(models.Model):
 
 class PersonalRecord(AbstractRecord):
     type = models.IntegerField(choices=RecordTypes.CHOICES)
-    user = models.ForeignKey(User, on_delete=models.CASCADE)
+    user = models.ForeignKey(Profile, on_delete=models.CASCADE)
 
 
-class SpendingGroupRecord(AbstractRecord):
-    group = models.ForeignKey(SpendingGroup, on_delete=models.CASCADE)
-    paid_by = models.ForeignKey(User, related_name="paid_by_me_set", on_delete=models.SET_NULL, null=True)
-    paid_for_users = models.ManyToManyField(User, related_name="paid_for_me_set")
+class GroupAccountRecord(AbstractRecord):
+    group_account = models.ForeignKey(GroupAccount, on_delete=models.CASCADE)
+    paid_by = models.ForeignKey(Profile, related_name="paid_by_me_set", on_delete=models.SET_NULL, null=True)
+    paid_for_users = models.ManyToManyField(Profile, related_name="paid_for_me_set")
 
-    def is_group(self):
-        return False if self.group_id is None else True
+    def is_group_account(self):
+        return False if self.group_account is None else True

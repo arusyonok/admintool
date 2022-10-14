@@ -1,5 +1,5 @@
 from django import forms
-from authorization.models import User
+from accounts.models import Profile
 from catalog.models import Category, SubCategory
 from catalog.common import RecordTypes
 from .models import PersonalRecord
@@ -14,7 +14,7 @@ class PersonalRecordCreateForm(forms.ModelForm):
         fields = ["title", "amount", "type", "sub_category", "user"]
 
     def clean_user(self):
-        return User.objects.first()
+        return Profile.objects.first()
 
 
 class ExpenseCreateForm(PersonalRecordCreateForm):
@@ -42,7 +42,7 @@ class PersonalRecordUpdateForm(forms.ModelForm):
         fields = ["title", "amount", "type", "sub_category", "user"]
 
     def clean_user(self):
-        return User.objects.first()
+        return Profile.objects.first()
 
 
 class ExpenseUpdateForm(PersonalRecordUpdateForm):

@@ -8,10 +8,10 @@ class PersonalRecordAdmin(admin.ModelAdmin):
     list_display = ('title', 'amount', 'date', 'sub_category', 'type', 'user')
 
 
-class SpendingGroupRecordForm(forms.ModelForm):
+class GroupAccountRecordForm(forms.ModelForm):
     class Meta:
-        model = SpendingGroupRecord
-        fields = ['title', 'amount', 'sub_category', 'group', 'paid_by', 'paid_for_users']
+        model = GroupAccountRecord
+        fields = ['title', 'amount', 'sub_category', 'group_account', 'paid_by', 'paid_for_users']
 
     def clean_paid_by(self):
         paid_by = self.cleaned_data['paid_by']
@@ -34,9 +34,9 @@ class SpendingGroupRecordForm(forms.ModelForm):
         return paid_for_users
 
 
-class SpendingGroupRecordAdmin(admin.ModelAdmin):
-    form = SpendingGroupRecordForm
-    list_display = ('group', 'title', 'amount', 'date', 'category', 'sub_category', 'paid_by',
+class GroupAccountRecordAdmin(admin.ModelAdmin):
+    form = GroupAccountRecordForm
+    list_display = ('group_account', 'title', 'amount', 'date', 'category', 'sub_category', 'paid_by',
                     'paid_for_users_string')
 
     def paid_for_users_string(self, obj):
@@ -47,5 +47,5 @@ class SpendingGroupRecordAdmin(admin.ModelAdmin):
         return obj.sub_category.parent
 
 
-admin.site.register(SpendingGroupRecord, SpendingGroupRecordAdmin)
+admin.site.register(GroupAccountRecord, GroupAccountRecordAdmin)
 admin.site.register(PersonalRecord, PersonalRecordAdmin)
