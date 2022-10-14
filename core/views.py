@@ -1,8 +1,10 @@
-from django.http import HttpResponse
-from django.shortcuts import render
+from django.views import generic as views
 
 
-def index(request):
-    template = 'finances/dashboard.html'
+class HeaderClass:
+    header_title = None
 
-    return render(request, template)
+
+class MainView(views.TemplateView, HeaderClass):
+    template_name = 'finances/dashboard.html'
+    header_title = "Dashboard"

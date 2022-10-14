@@ -2,12 +2,9 @@ from django.views import generic as views
 from django.urls import reverse_lazy
 from catalog.common import RecordTypes
 from catalog.models import Category
+from core.views import HeaderClass
 from .models import PersonalRecord
 from . import forms
-
-
-class HeaderClass:
-    header_title = None
 
 
 class PersonalRecordView(views.TemplateView, HeaderClass):

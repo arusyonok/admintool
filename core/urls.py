@@ -15,12 +15,11 @@ Including another URLconf
 """
 from django.urls import re_path as url, include
 from django.contrib import admin
-from finances import views as f_views
-from core import views as a_views
+from core import views as core_views
 
 urlpatterns = [
-    url(r'^$', a_views.index, name='index'),
-    url(r'dashboard', a_views.index, name='dashboard'),
+    url(r'^$', core_views.MainView.as_view(), name='index'),
     url(r'^admin/', admin.site.urls),
+    url(r'^dashboard', core_views.MainView.as_view(), name='dashboard'),
     url(r'^finances/', include('finances.urls')),
 ]
