@@ -12,7 +12,7 @@ class PersonalRecordView(BasicViewOptions, views.TemplateView):
 
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
-        context['records'] = PersonalRecord.objects.filter(type=self.record_type)
+        context['records'] = PersonalRecord.objects.filter(type=self.record_type, user=self.request.user)
         context['header_title'] = self.header_title
         return context
 
@@ -38,6 +38,10 @@ class PersonalRecordCreateView(BasicViewOptions, views.CreateView):
         context['categories'] = Category.objects.filter(type=self.record_type)
         context['header_title'] = self.header_title
         return context
+
+    def form_valid(self, form):
+        form.instance.user = self.request.user
+        return super(PersonalRecordCreateView, self).form_valid(form)
 
 
 class ExpenseCreateView(PersonalRecordCreateView):
@@ -66,6 +70,10 @@ class PersonalRecordUpdateView(BasicViewOptions, views.UpdateView):
         context['parent_category'] = self.object.category
         context['header_title'] = self.header_title
         return context
+
+    def form_valid(self, form):
+        form.instance.user = self.request.user
+        return super(PersonalRecordUpdateView, self).form_valid(form)
 
 
 class ExpenseUpdateView(PersonalRecordUpdateView):

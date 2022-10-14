@@ -1,20 +1,15 @@
 from django import forms
-from accounts.models import Profile
-from catalog.models import Category, SubCategory
+from catalog.models import SubCategory
 from catalog.common import RecordTypes
 from .models import PersonalRecord
 
 
 class PersonalRecordCreateForm(forms.ModelForm):
     type = forms.CharField(widget=forms.HiddenInput(), required=False)
-    user = forms.CharField(widget=forms.HiddenInput(), required=False)
 
     class Meta:
         model = PersonalRecord
-        fields = ["title", "amount", "type", "sub_category", "user"]
-
-    def clean_user(self):
-        return Profile.objects.first()
+        fields = ["title", "amount", "type", "sub_category"]
 
 
 class ExpenseCreateForm(PersonalRecordCreateForm):
@@ -35,14 +30,10 @@ class IncomeCreateForm(PersonalRecordCreateForm):
 
 class PersonalRecordUpdateForm(forms.ModelForm):
     type = forms.CharField(widget=forms.HiddenInput(), required=False)
-    user = forms.CharField(widget=forms.HiddenInput(), required=False)
 
     class Meta:
         model = PersonalRecord
-        fields = ["title", "amount", "type", "sub_category", "user"]
-
-    def clean_user(self):
-        return Profile.objects.first()
+        fields = ["title", "amount", "type", "sub_category"]
 
 
 class ExpenseUpdateForm(PersonalRecordUpdateForm):
