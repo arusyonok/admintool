@@ -22,4 +22,5 @@ urlpatterns = [
     url(r'^admin/', admin.site.urls),
     url(r'^dashboard', core_views.MainView.as_view(), name='dashboard'),
     url(r'^finances/', include('finances.urls')),
+    url(r'^accounts/', include('accounts.urls')),
 ]

@@ -2,12 +2,12 @@ from django.views import generic as views
 from django.urls import reverse_lazy
 from catalog.common import RecordTypes
 from catalog.models import Category
-from core.views import HeaderClass
+from core.views import BasicViewOptions
 from .models import PersonalRecord
 from . import forms
 
 
-class PersonalRecordView(views.TemplateView, HeaderClass):
+class PersonalRecordView(BasicViewOptions, views.TemplateView):
     record_type = None
 
     def get_context_data(self, **kwargs):
@@ -29,7 +29,7 @@ class IncomeView(PersonalRecordView):
     header_title = "Personal Incomes"
 
 
-class PersonalRecordCreateView(views.CreateView, HeaderClass):
+class PersonalRecordCreateView(BasicViewOptions, views.CreateView):
     model = PersonalRecord
     record_type = None
 
@@ -56,7 +56,7 @@ class IncomeCreateView(PersonalRecordCreateView):
     header_title = "Add Income"
 
 
-class PersonalRecordUpdateView(views.UpdateView, HeaderClass):
+class PersonalRecordUpdateView(BasicViewOptions, views.UpdateView):
     model = PersonalRecord
     record_type = None
 
@@ -84,7 +84,7 @@ class IncomeUpdateView(PersonalRecordUpdateView):
     header_title = "Edit Income"
 
 
-class PersonalRecordDeleteView(views.DeleteView):
+class PersonalRecordDeleteView(BasicViewOptions, views.DeleteView):
     model = PersonalRecord
 
 
