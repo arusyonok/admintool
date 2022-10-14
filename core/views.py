@@ -13,3 +13,8 @@ class BasicViewOptions(LoginRequiredMixin, HeaderClass):
 class MainView(BasicViewOptions, views.TemplateView):
     template_name = 'finances/dashboard.html'
     header_title = "Dashboard"
+
+    def get_context_data(self, **kwargs):
+        context = super().get_context_data(**kwargs)
+        context['header_title'] = self.header_title
+        return context
