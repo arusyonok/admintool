@@ -39,6 +39,7 @@ pipenv==2022.10.12
 platformdirs==2.5.2
 protobuf==4.21.7
 psutil==5.9.2
+psycopg2==2.9.4
 ptyprocess==0.7.0
 pyclean==2.2.0
 pycparser==2.21
