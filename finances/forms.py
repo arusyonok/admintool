@@ -1,14 +1,14 @@
 from django import forms
 from catalog.models import SubCategory
 from catalog.common import RecordTypes
-from .models import PersonalRecord
+from .models import PersonalWalletRecord
 
 
 class PersonalRecordCreateForm(forms.ModelForm):
     type = forms.CharField(widget=forms.HiddenInput(), required=False)
 
     class Meta:
-        model = PersonalRecord
+        model = PersonalWalletRecord
         fields = ["title", "amount", "type", "sub_category"]
 
 
@@ -32,7 +32,7 @@ class PersonalRecordUpdateForm(forms.ModelForm):
     type = forms.CharField(widget=forms.HiddenInput(), required=False)
 
     class Meta:
-        model = PersonalRecord
+        model = PersonalWalletRecord
         fields = ["title", "amount", "type", "sub_category"]
 
 

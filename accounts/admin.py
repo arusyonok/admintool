@@ -6,7 +6,7 @@ class ProfileAdmin(admin.ModelAdmin):
     list_display = ('username', 'first_name', 'last_name')
 
 
-class GroupAccountAdmin(admin.ModelAdmin):
+class WalletAdmin(admin.ModelAdmin):
     list_display = ('title', 'group_members')
 
     def group_members(self, obj):
@@ -14,4 +14,4 @@ class GroupAccountAdmin(admin.ModelAdmin):
 
 
 admin.site.register(Profile, ProfileAdmin)
-admin.site.register(GroupAccount, GroupAccountAdmin)
+admin.site.register(Wallet, WalletAdmin)

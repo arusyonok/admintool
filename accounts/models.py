@@ -17,10 +17,25 @@ class Profile(AbstractUser):
 
         return display_name
 
+    def personal_wallets(self):
+        return [acc for acc in self.wallet_set.all() if acc.is_personal_wallet]
 
-class GroupAccount(models.Model):
+    def group_wallets(self):
+        return [acc for acc in self.wallet_set.all() if acc.is_group_wallet]
+
+
+class Wallet(models.Model):
     title = models.CharField(max_length=50)
     users = models.ManyToManyField(Profile)
 
     def __str__(self):
         return self.title
+
+    @property
+    def is_group_wallet(self):
+        return True if self.users.count() >= 2 else False
+
+    @property
+    def is_personal_wallet(self):
+        return True if self.users.count() == 1 else False
+

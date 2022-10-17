@@ -3,7 +3,7 @@ from django.urls import reverse_lazy
 from catalog.common import RecordTypes
 from catalog.models import Category
 from core.views import BasicViewOptions
-from .models import PersonalRecord
+from .models import PersonalWalletRecord
 from . import forms
 
 
@@ -12,7 +12,7 @@ class PersonalRecordView(BasicViewOptions, views.TemplateView):
 
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
-        context['records'] = PersonalRecord.objects.filter(type=self.record_type, user=self.request.user)
+        context['records'] = PersonalWalletRecord.objects.filter(type=self.record_type, user=self.request.user).last()
         context['header_title'] = self.header_title
         return context
 
@@ -30,7 +30,7 @@ class IncomeView(PersonalRecordView):
 
 
 class PersonalRecordCreateView(BasicViewOptions, views.CreateView):
-    model = PersonalRecord
+    model = PersonalWalletRecord
     record_type = None
 
     def get_context_data(self, **kwargs):
@@ -61,7 +61,7 @@ class IncomeCreateView(PersonalRecordCreateView):
 
 
 class PersonalRecordUpdateView(BasicViewOptions, views.UpdateView):
-    model = PersonalRecord
+    model = PersonalWalletRecord
     record_type = None
 
     def get_context_data(self, **kwargs):
@@ -93,7 +93,7 @@ class IncomeUpdateView(PersonalRecordUpdateView):
 
 
 class PersonalRecordDeleteView(BasicViewOptions, views.DeleteView):
-    model = PersonalRecord
+    model = PersonalWalletRecord
 
 
 class ExpenseDeleteView(PersonalRecordDeleteView):
