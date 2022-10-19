@@ -11,8 +11,8 @@
         <div class="col-12">
           <div class="card">
             <div class="card-header">
-              <a href="{% url 'personal-incomes-add' %}">
-                <button type="button" class="btn btn-success">Add Income</button>
+              <a href="{% url 'personal-expenses:add' wallet.id %}">
+                <button type="button" class="btn btn-success">Add Expense</button>
               </a>
               <div class="card-tools">
                 <ul class="pagination pagination-sm float-right">
@@ -38,19 +38,19 @@
                   </tr>
                 </thead>
                 <tbody>
-                  {% for income in records %}
+                  {% for expense in records %}
                   <tr>
-                    <td>{{ income.title }}</td>
-                    <td>{{ income.amount }}</td>
-                    <td>{{ income.date }}</td>
-                    <td>{{ income.sub_category.parent }}</td>
-                    <td>{{ income.sub_category }}</td>
+                    <td>{{ expense.title }}</td>
+                    <td>{{ expense.amount }}</td>
+                    <td>{{ expense.date }}</td>
+                    <td>{{ expense.sub_category.parent }}</td>
+                    <td>{{ expense.sub_category }}</td>
                     <td>
-                      <a class="btn btn-info btn-sm" href="{% url 'personal-incomes-edit' pk=income.id %}">
+                      <a class="btn btn-info btn-sm" href="{% url 'personal-expenses:edit' wallet.id expense.id %}">
                         <i class="fas fa-pencil-alt"></i>
                       </a>
                       <a class="btn btn-danger btn-sm" data-toggle="modal" data-target="#delete-confirmation-modal"
-                         href="{% url 'personal-incomes-delete' income.pk %}">
+                         href="{% url 'personal-expenses:delete' wallet.id expense.pk %}">
                         <i class="fas fa-trash"></i>
                       </a>
                     </td>

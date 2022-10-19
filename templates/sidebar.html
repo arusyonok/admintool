@@ -33,45 +33,46 @@
             </a>
           </li>
           <li class="nav-item"></li>
-          <li class="nav-item
-          {% if 'personal-expenses' in url_name  %}menu-open{% endif %}
-          {% if 'personal-incomes' in url_name %}menu-open{% endif %}">
-            <a href="#" class="nav-link
-                        {% if 'personal-expenses' in url_name %}active{% endif %}
-                        {% if 'personal-incomes' in url_name %}active{% endif %}">
+          {% for wallet in user.personal_wallets %}
+          <li class="nav-item ">
+            <a href="#" class="nav-link">
               <i class="nav-icon fas fa-coins"></i>
               <p>
-                Personal Records
+                {{ wallet.title }}
                 <i class="fas fa-angle-left right"></i>
               </p>
             </a>
             <ul class="nav nav-treeview">
               <li class="nav-item">
-                <a href="{% url 'personal-expenses' %}"
-                   class="nav-link {% if 'personal-expenses' in url_name %}active{% endif %}">
+                <a href="{% url 'personal-expenses:view' wallet.id %}"
+                   class="nav-link">
                   <i class="far fa-circle nav-icon"></i>
                   <p>Expenses</p>
                 </a>
               </li>
               <li class="nav-item">
-                <a href="{% url 'personal-incomes' %}"
+                <a href="{% url 'personal-incomes:view' wallet.id %}"
                    class="nav-link {% if 'personal-incomes' in url_name %}active{% endif %}">
                   <i class="far fa-circle nav-icon"></i>
                   <p>Incomes</p>
                 </a>
               </li>
+              <li class="nav-item">
+                <a href="#" class="nav-link">
+                  <i class="far fa-circle nav-icon"></i>
+                  <p>Transfers</p>
+                </a>
+              </li>
             </ul>
           </li>
-          <li  class="nav-item"></li>
-          <li class="nav-item
-            {% if 'group_expenses' in url_name %}menu-open{% endif %}
-            {% if 'group_balance' in url_name %}menu-open{% endif %}">
-            <a href="#" class="nav-link
-              {% if 'group_expenses' in url_name %}active{% endif %}
-              {% if 'group_balance' in url_name %}active{% endif %}">
+          {% endfor %}
+
+          {% for wallet in user.group_wallets %}
+          <li class="nav-item">
+            <a href="#" class="nav-link">
               <i class="nav-icon fas fa-wallet"></i>
               <p>
-                Group Name Records
+                {{ wallet.title }}
                 <i class="fas fa-angle-left right"></i>
               </p>
             </a>
@@ -92,6 +93,7 @@
               </li>
             </ul>
           </li>
+          {% endfor %}
         </ul>
       </nav>
       <!-- /.sidebar-menu -->

@@ -1,18 +1,26 @@
-from django.urls import re_path as url
+from django.urls import re_path as url, include
 
 from . import views
 
+
+expenses_urls = [
+    url(r'edit/(?P<pk>[0-9]+)/$', views.ExpenseUpdateView.as_view(), name='edit'),
+    url(r'delete/(?P<pk>[0-9]+)/$', views.ExpenseDeleteView.as_view(), name='delete'),
+    url(r'add', views.ExpenseCreateView.as_view(), name='add'),
+    url(r'^$', views.ExpenseView.as_view(), name='view'),
+]
+
+incomes_urls = [
+    url(r'edit/(?P<pk>[0-9]+)/$', views.IncomeUpdateView.as_view(), name='edit'),
+    url(r'delete/(?P<pk>[0-9]+)/$', views.IncomeDeleteView.as_view(), name='delete'),
+    url(r'add', views.IncomeCreateView.as_view(), name='add'),
+    url(r'^$', views.IncomeView.as_view(), name='view'),
+]
+
+
 urlpatterns = [
-    url(r'^$', views.ExpenseView.as_view(), name='personal-expenses'),
-    url(r'personal/expenses/edit/(?P<pk>[0-9]+)/$', views.ExpenseUpdateView.as_view(), name='personal-expenses-edit'),
-    url(r'personal/expenses/delete/(?P<pk>[0-9]+)/$', views.ExpenseDeleteView.as_view(), name='personal-expenses-delete'),
-    url(r'personal/expenses/add', views.ExpenseCreateView.as_view(), name='personal-expenses-add'),
-    url(r'personal/expenses', views.ExpenseView.as_view(), name='personal-expenses'),
-    url(r'personal/incomes/edit/(?P<pk>[0-9]+)/$', views.IncomeUpdateView.as_view(), name='personal-incomes-edit'),
-    url(r'personal/incomes/delete/(?P<pk>[0-9]+)/$', views.IncomeDeleteView.as_view(),
-        name='personal-incomes-delete'),
-    url(r'personal/incomes/add', views.IncomeCreateView.as_view(), name='personal-incomes-add'),
-    url(r'personal/incomes', views.IncomeView.as_view(), name='personal-incomes'),
+    url(r'personal_wallet/(?P<wallet_pk>[0-9]+)/expenses/', include((expenses_urls, "finances"), namespace="personal-expenses")),
+    url(r'personal_wallet/(?P<wallet_pk>[0-9]+)/incomes/',  include((incomes_urls, "finances"), namespace="personal-incomes")),
     url(r'group/expenses', views.GroupExpensesView.as_view(), name='group_expenses'),
-    url(r'group/balance', views.GroupBalanceView.as_view(), name='group_balance'),
+    url(r'group/balance', views.GroupBalanceView.as_view(), name='group_balance')
 ]
