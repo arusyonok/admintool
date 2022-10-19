@@ -161,5 +161,68 @@ class GroupExpensesView(BasicViewOptions, views.TemplateView, WalletViewDetails)
         return context
 
 
+class GroupExpenseCreateView(BasicViewOptions, views.CreateView, WalletViewDetails):
+    model = GroupWalletRecord
+    form_class = forms.GroupExpenseCreateForm
+    template_name = 'finances/group_wallet/expense_add.html'
+    success_url_prefix = "group-expenses:view"
+    record_type = RecordTypes.EXPENSE
+    header_title = "Add Group Expense"
+
+    def get_context_data(self, **kwargs):
+        context = super().get_context_data(**kwargs)
+        context['categories'] = Category.objects.filter(type=RecordTypes.EXPENSE)
+        context['header_title'] = self.header_title
+        return context
+
+    def get_form_kwargs(self):
+        kwargs = super(GroupExpenseCreateView, self).get_form_kwargs()
+        kwargs["wallet_pk"] = self.kwargs.get("wallet_pk")
+        return kwargs
+
+    def form_valid(self, form):
+        form.instance.group_wallet = self.get_wallet_or_404()
+        return super(GroupExpenseCreateView, self).form_valid(form)
+
+    def get_success_url(self):
+        return reverse_lazy(self.success_url_prefix, args=[self.kwargs.get("wallet_pk")])
+
+
+class GroupExpenseUpdateView(BasicViewOptions, views.UpdateView, WalletViewDetails):
+    model = GroupWalletRecord
+    form_class = forms.GroupExpenseUpdateForm
+    template_name = 'finances/group_wallet/expense_edit.html'
+    success_url_prefix = "group-expenses:view"
+    record_type = RecordTypes.EXPENSE
+    header_title = "Edit Group Expense"
+
+    def get_context_data(self, **kwargs):
+        context = super().get_context_data(**kwargs)
+        context['categories'] = Category.objects.filter(type=RecordTypes.EXPENSE)
+        context['parent_category'] = self.object.category
+        context['header_title'] = self.header_title
+        return context
+
+    def get_form_kwargs(self):
+        kwargs = super(GroupExpenseUpdateView, self).get_form_kwargs()
+        kwargs["wallet_pk"] = self.kwargs.get("wallet_pk")
+        return kwargs
+
+    def form_valid(self, form):
+        form.instance.group_wallet = self.get_wallet_or_404()
+        return super(GroupExpenseUpdateView, self).form_valid(form)
+
+    def get_success_url(self):
+        return reverse_lazy(self.success_url_prefix, args=[self.kwargs.get("wallet_pk")])
+
+
+class GroupExpenseDeleteView(BasicViewOptions, views.DeleteView):
+    model = GroupWalletRecord
+    success_url_prefix = "group-expenses:view"
+
+    def get_success_url(self):
+        return reverse_lazy(self.success_url_prefix, args=[self.kwargs.get("wallet_pk")])
+
+
 class GroupBalanceView(views.TemplateView):
     template_name = 'finances/group_wallet/balance.html'

@@ -18,6 +18,9 @@ incomes_urls = [
 ]
 
 group_expenses_urls = [
+    url(r'edit/(?P<pk>[0-9]+)/$', views.GroupExpenseUpdateView.as_view(), name='edit'),
+    url(r'delete/(?P<pk>[0-9]+)/$', views.GroupExpenseDeleteView.as_view(), name='delete'),
+    url(r'add', views.GroupExpenseCreateView.as_view(), name='add'),
     url(r'^$', views.GroupExpensesView.as_view(), name='view'),
 ]
 
