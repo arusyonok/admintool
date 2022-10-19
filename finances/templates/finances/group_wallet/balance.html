@@ -2,4 +2,31 @@
 
 {% block content %}
 
+  {% include "finances/content_header.html" with header_title=header_title %}
+
+  <!-- Main content -->
+  <section class="content">
+    <div class="container-fluid">
+      <div class="row">
+          <div class="col-12">
+            <div class="card card-info">
+              <div class="card-header">
+                <h3 class="card-title">{{ header_title }}</h3>
+              </div>
+              <!-- /.card-header -->
+              <div class="card-body">
+                <div class="chart">
+                  <canvas id="barChart" data-datasets="{{ datasets }}"></canvas>
+                </div>
+              </div>
+              <!-- /.card-body -->
+            </div>
+            <!-- /.card -->
+          </div>
+        <!-- /.col -->
+      </div>
+      <!-- /.row -->
+    </div><!-- /.container-fluid -->
+  </section>
+  <!-- /.content -->
 {% endblock %}

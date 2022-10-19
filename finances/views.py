@@ -1,3 +1,4 @@
+import json
 from django.views import generic as views
 from django.urls import reverse_lazy
 from django.http import Http404
@@ -224,5 +225,60 @@ class GroupExpenseDeleteView(BasicViewOptions, views.DeleteView):
         return reverse_lazy(self.success_url_prefix, args=[self.kwargs.get("wallet_pk")])
 
 
-class GroupBalanceView(views.TemplateView):
+class GroupBalanceView(BasicViewOptions, views.TemplateView):
     template_name = 'finances/group_wallet/balance.html'
+    header_title = "Group Balance"
+
+    def get_context_data(self, **kwargs):
+        context = super().get_context_data(**kwargs)
+        datasets = self._create_datasets_for_chartj()
+        context['header_title'] = self.header_title
+        context['datasets'] = json.dumps(datasets)
+        return context
+
+    def _calculate_balances(self):
+        balances1 = {
+            "Arus": 20,
+            "Tasos": -20
+        }
+        balances2 = {
+            "Maria": 50,
+            "Arus": -50
+        }
+        balances3 = {
+            "Tasos": 40,
+            "Arus": -40
+        }
+        balances = [balances1, balances2, balances3]
+
+        return balances
+
+    def _create_datasets_for_chartj(self):
+        balances = self._calculate_balances()
+
+        labels = []
+        positive_data = []
+        negative_data = []
+        for balance in balances:
+            labels.append("/".join(balance.keys()))
+            for name, amount in balance.items():
+                if amount > 0:
+                    positive_data.append(amount)
+                else:
+                    negative_data.append(amount)
+        negative_dataset = {
+            "backgroundColor": 'rgba(60, 141, 188, 0.9)',
+            "data": negative_data
+        }
+        positive_dataset = {
+            "backgroundColor": 'rgba(210, 214, 222, 1)',
+            "data": positive_data
+        }
+        datasets = {
+            "labels": labels,
+            "datasets": [
+                positive_dataset,
+                negative_dataset,
+            ]
+        }
+        return datasets
