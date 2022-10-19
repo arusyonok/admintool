@@ -14,3 +14,8 @@ class RecordTypes:
         "Income": INCOME,
         "Transfer": TRANSFER,
     }
+
+
+class WalletType:
+    PERSONAL_WALLET = "personal_wallet"
+    GROUP_WALLET = "group_wallet"

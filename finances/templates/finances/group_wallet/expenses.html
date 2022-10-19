@@ -1,0 +1,91 @@
+{% extends "index.html" %}
+
+{% block content %}
+
+  {% include "finances/content_header.html" with header_title=header_title %}
+
+  <!-- Main content -->
+  <section class="content">
+    <div class="container-fluid">
+      <div class="row">
+        <div class="col-12">
+          <div class="card">
+            <div class="card-header">
+              <a href="#">
+                <button type="button" class="btn btn-success">Add Expense</button>
+              </a>
+              <div class="card-tools">
+                <ul class="pagination pagination-sm float-right">
+                  <li class="page-item"><a class="page-link" href="#">&laquo;</a></li>
+                  <li class="page-item"><a class="page-link" href="#">1</a></li>
+                  <li class="page-item"><a class="page-link" href="#">2</a></li>
+                  <li class="page-item"><a class="page-link" href="#">3</a></li>
+                  <li class="page-item"><a class="page-link" href="#">&raquo;</a></li>
+                </ul>
+              </div>
+            </div>
+            <!-- /.card-header -->
+            <div class="card-body table-responsive p-0">
+              <table class="table table-hover">
+                <thead>
+                  <tr>
+                    <th>Title</th>
+                    <th>Price</th>
+                    <th>Date</th>
+                    <th>Category</th>
+                    <th>Sub Category</th>
+                    <th>Paid By</th>
+                    <th>Paid For</th>
+                    <th>Actions</th>
+                  </tr>
+                </thead>
+                <tbody>
+                  {% for expense in records %}
+                  <tr>
+                    <td>{{ expense.title }}</td>
+                    <td>{{ expense.amount }}</td>
+                    <td>{{ expense.date }}</td>
+                    <td>{{ expense.sub_category.parent }}</td>
+                    <td>{{ expense.sub_category }}</td>
+                    <td>{{ expense.paid_by.name_display }}</td>
+                    <td>
+                      {% for user in expense.paid_for_users.all %}
+                        {{ user.name_display }} <br>
+                      {% endfor %}
+                    </td>
+                    <td>
+                      <a class="btn btn-info btn-sm" href="#">
+                        <i class="fas fa-pencil-alt"></i>
+                      </a>
+                      <a class="btn btn-danger btn-sm" data-toggle="modal" data-target="#delete-confirmation-modal"
+                         href="#">
+                        <i class="fas fa-trash"></i>
+                      </a>
+                    </td>
+                  </tr>
+                {% endfor %}
+                </tbody>
+              </table>
+            </div>
+            <!-- /.card-body -->
+            <div class="card-footer clearfix">
+              <ul class="pagination pagination-sm m-0 float-right">
+                <li class="page-item"><a class="page-link" href="#">&laquo;</a></li>
+                <li class="page-item"><a class="page-link" href="#">1</a></li>
+                <li class="page-item"><a class="page-link" href="#">2</a></li>
+                <li class="page-item"><a class="page-link" href="#">3</a></li>
+                <li class="page-item"><a class="page-link" href="#">&raquo;</a></li>
+              </ul>
+            </div>
+          </div>
+          <!-- /.card -->
+        </div>
+        <!-- /.col -->
+      </div>
+      <!-- /.row -->
+    </div><!-- /.container-fluid -->
+  </section>
+  <!-- /.content -->
+  {% include "finances/delete_confirmation.html" %}
+
+{% endblock %}

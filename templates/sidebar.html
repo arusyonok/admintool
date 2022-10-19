@@ -52,7 +52,7 @@
               </li>
               <li class="nav-item">
                 <a href="{% url 'personal-incomes:view' wallet.id %}"
-                   class="nav-link {% if 'personal-incomes' in url_name %}active{% endif %}">
+                   class="nav-link">
                   <i class="far fa-circle nav-icon"></i>
                   <p>Incomes</p>
                 </a>
@@ -78,15 +78,15 @@
             </a>
             <ul class="nav nav-treeview">
               <li class="nav-item">
-                <a href="{% url 'group_expenses' %}"
-                   class="nav-link {% if 'group_expenses' in url_name %}active{% endif %}">
+                <a href="{% url 'group-expenses:view' wallet.id %}"
+                   class="nav-link">
                   <i class="far fa-circle nav-icon"></i>
                   <p>Expenses</p>
                 </a>
               </li>
               <li class="nav-item">
-                <a href="{% url 'group_balance' %}"
-                   class="nav-link {% if 'group_balance' in url_name %}active{% endif %}">
+                <a href="{% url 'group-balance' wallet.id %}"
+                   class="nav-link">
                   <i class="far fa-circle nav-icon"></i>
                   <p>Balance</p>
                 </a>

@@ -2,31 +2,44 @@ from django.views import generic as views
 from django.urls import reverse_lazy
 from django.http import Http404
 from accounts.models import Wallet
-from catalog.common import RecordTypes
+from catalog.common import RecordTypes, WalletType
 from catalog.models import Category
 from core.views import BasicViewOptions
-from .models import PersonalWalletRecord
+from .models import PersonalWalletRecord, GroupWalletRecord
 from . import forms
 
 
 class WalletViewDetails:
     wallet = None
+    wallet_type = None
+    _is_personal_wallet_type = False
+    _is_group_wallet_type = False
 
     def get_wallet_or_404(self):
         wallet_pk = self.kwargs.get("wallet_pk")
+        self.check_wallet_type()
         try:
             # TODO: Make this nicer error handling
             wallet = Wallet.objects.get(pk=wallet_pk, users=self.request.user)
-            if not wallet.is_personal_wallet:
+            if self._is_personal_wallet_type and not wallet.is_personal_wallet:
+                raise Wallet.DoesNotExist
+            if self._is_group_wallet_type and not wallet.is_group_wallet:
                 raise Wallet.DoesNotExist
         except Wallet.DoesNotExist:
             raise Http404("No Wallet matches the given query.")
 
         return wallet
 
+    def check_wallet_type(self):
+        if self.wallet_type == WalletType.PERSONAL_WALLET:
+            self._is_personal_wallet_type = True
+        if self.wallet_type == WalletType.GROUP_WALLET:
+            self._is_group_wallet_type = True
+
 
 class PersonalRecordView(BasicViewOptions, views.TemplateView, WalletViewDetails):
     record_type = None
+    wallet_type = WalletType.PERSONAL_WALLET
 
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
@@ -134,9 +147,19 @@ class IncomeDeleteView(PersonalRecordDeleteView):
     success_url_prefix = "personal-incomes:view"
 
 
-class GroupExpensesView(views.TemplateView):
-    template_name = 'finances/group_expenses.html'
+class GroupExpensesView(BasicViewOptions, views.TemplateView, WalletViewDetails):
+    template_name = 'finances/group_wallet/expenses.html'
+    header_title = "Group Expenses"
+    wallet_type = WalletType.GROUP_WALLET
+
+    def get_context_data(self, **kwargs):
+        context = super().get_context_data(**kwargs)
+        wallet = self.get_wallet_or_404()
+        context["records"] = GroupWalletRecord.objects.filter(group_wallet=wallet.pk)
+        context['header_title'] = self.header_title
+        context['wallet'] = wallet
+        return context
 
 
 class GroupBalanceView(views.TemplateView):
-    template_name = 'finances/group_balance.html'
+    template_name = 'finances/group_wallet/balance.html'

@@ -17,10 +17,14 @@ incomes_urls = [
     url(r'^$', views.IncomeView.as_view(), name='view'),
 ]
 
+group_expenses_urls = [
+    url(r'^$', views.GroupExpensesView.as_view(), name='view'),
+]
+
 
 urlpatterns = [
     url(r'personal_wallet/(?P<wallet_pk>[0-9]+)/expenses/', include((expenses_urls, "finances"), namespace="personal-expenses")),
     url(r'personal_wallet/(?P<wallet_pk>[0-9]+)/incomes/',  include((incomes_urls, "finances"), namespace="personal-incomes")),
-    url(r'group/expenses', views.GroupExpensesView.as_view(), name='group_expenses'),
-    url(r'group/balance', views.GroupBalanceView.as_view(), name='group_balance')
+    url(r'group_wallet/(?P<wallet_pk>[0-9]+)/expenses/', include((group_expenses_urls, "finances"), namespace='group-expenses')),
+    url(r'group_wallet/(?P<wallet_pk>[0-9]+)/balance', views.GroupBalanceView.as_view(), name='group-balance')
 ]
