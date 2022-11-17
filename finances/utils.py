@@ -5,7 +5,7 @@ from decimal import Decimal
 from django.contrib.postgres.aggregates import ArrayAgg
 from django.db.models import OuterRef, Q, QuerySet, Subquery, Sum
 
-from .models import GroupWalletRecord
+from .models import GroupWalletRecord, Balance
 
 
 @dataclass
@@ -113,6 +113,54 @@ def check_edge_cases(sub_grouped_people_records_combo_list:  typing.List[typing.
     final_list = [item for item in sub_grouped_people_records_combo_list if item["records"]]
 
     return final_list
+
+
+def calculate_and_set_debt_values(debt_values, wallet_id):
+    sorted_debt_values = sorted(debt_values, key=lambda d: d['debt'], reverse=True)
+
+    most_paid = sorted_debt_values[0]
+    least_paid = sorted_debt_values[-1]
+
+    # happy days
+    loaned_to = least_paid["owner"]
+    loaned_from = most_paid["owner"]
+
+    balance_obj, created = Balance.objects.get_or_create(
+        loaned_from_id=loaned_from,
+        loaned_to_id=loaned_to,
+        group_wallet_id=wallet_id
+    )
+
+    difference = most_paid["debt"] + least_paid["debt"]   # least ome should always be minus
+
+    if difference < 0:
+        balance_obj.amount = most_paid["debt"]
+        balance_obj.save()
+
+        sorted_debt_values[-1]["debt"] = difference
+        sorted_debt_values.pop(0)
+        calculate_and_set_debt_values(sorted_debt_values, wallet_id)
+    elif difference > 0:
+        balance_obj.amount = abs(least_paid["debt"])
+        balance_obj.save()
+
+        sorted_debt_values[0]["debt"] = difference
+        sorted_debt_values.pop()
+        calculate_and_set_debt_values(sorted_debt_values, wallet_id)
+    elif difference == 0:
+        balance_obj.amount = abs(least_paid["debt"])
+        balance_obj.save()
+    else:
+        raise ValueError("Something went wrong with balance calculation")
+
+
+def calculate_balances(wallet_pk):
+    sub_grouped_people_and_records = get_sub_grouped_people_and_records_of_wallet(wallet_pk)
+
+    for data in sub_grouped_people_and_records:
+        debt_values = data.sorted_debt_values
+
+        calculate_and_set_debt_values(debt_values, data.wallet_id)
 
 
 def get_balances_stale(user_id, wallet_id):
