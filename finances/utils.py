@@ -163,19 +163,18 @@ def calculate_balances(wallet_pk):
         calculate_and_set_debt_values(debt_values, data.wallet_id)
 
 
-def get_balances_stale(user_id, wallet_id):
-    balances1 = {
-        "Arus": 20,
-        "Tasos": -20
-    }
-    balances2 = {
-        "Maria": 50,
-        "Arus": -50
-    }
-    balances3 = {
-        "Tasos": 40,
-        "Arus": -40
-    }
-    balances = [balances1, balances2, balances3]
+def get_balances(current_user, wallet_pk):
+    calculate_balances(wallet_pk)  # TODO: move this somewhere sensible
+    user_balances = Balance.objects.filter(
+        Q(loaned_from_id=current_user) | Q(loaned_to_id=current_user),
+        group_wallet_id=wallet_pk
+    )
+    balances = []
+    for balance in user_balances:
+        amount = int(balance.amount)
+        balances.append({
+            balance.loaned_from.first_name: amount,
+            balance.loaned_to.first_name: -amount
+        })
 
     return balances

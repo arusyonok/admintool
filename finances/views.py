@@ -1,14 +1,17 @@
 import json
-from django.views import generic as views
-from django.urls import reverse_lazy
+
 from django.http import Http404
+from django.urls import reverse_lazy
+from django.views import generic as views
+
 from accounts.models import Wallet
 from catalog.common import RecordTypes, WalletType
 from catalog.models import Category
 from core.views import BasicViewOptions
-from .models import PersonalWalletRecord, GroupWalletRecord
+
 from . import forms
-from .utils import get_balances_stale
+from .models import GroupWalletRecord, PersonalWalletRecord
+from .utils import get_balances
 
 
 class WalletViewDetails:
@@ -238,7 +241,7 @@ class GroupBalanceView(BasicViewOptions, views.TemplateView):
         return context
 
     def _create_datasets_for_chartj(self):
-        balances = get_balances_stale(self.request.user.id, self.kwargs.get("wallet_pk"))
+        balances = get_balances(self.request.user.id, self.kwargs.get("wallet_pk"))
 
         labels = []
         positive_data = []
