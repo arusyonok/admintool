@@ -8,6 +8,7 @@ from catalog.models import Category
 from core.views import BasicViewOptions
 from .models import PersonalWalletRecord, GroupWalletRecord
 from . import forms
+from .utils import get_balances_stale
 
 
 class WalletViewDetails:
@@ -236,25 +237,8 @@ class GroupBalanceView(BasicViewOptions, views.TemplateView):
         context['datasets'] = json.dumps(datasets)
         return context
 
-    def _calculate_balances(self):
-        balances1 = {
-            "Arus": 20,
-            "Tasos": -20
-        }
-        balances2 = {
-            "Maria": 50,
-            "Arus": -50
-        }
-        balances3 = {
-            "Tasos": 40,
-            "Arus": -40
-        }
-        balances = [balances1, balances2, balances3]
-
-        return balances
-
     def _create_datasets_for_chartj(self):
-        balances = self._calculate_balances()
+        balances = get_balances_stale(self.request.user.id, self.kwargs.get("wallet_pk"))
 
         labels = []
         positive_data = []
