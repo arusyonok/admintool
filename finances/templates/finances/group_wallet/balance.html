@@ -30,3 +30,32 @@
   </section>
   <!-- /.content -->
 {% endblock %}
+
+{% block javascript %}
+
+<script type="text/javascript">
+    //-------------
+    //- BALANCE HORIZONTAL BAR CHART -
+    //-------------
+
+    var barChartCanvas = $('#barChart')
+    var barChartDataset = JSON.parse(barChartCanvas.attr("data-datasets"))
+
+    var barChartOptions = {
+        legend: {
+            display: false,
+        },
+        responsive: true,
+        maintainAspectRatio: false,
+        datasetFill: false,
+    }
+    var barChartConfig = {
+      type: 'horizontalBar',
+      data: barChartDataset,
+      options: barChartOptions
+    };
+
+    var chart = new Chart(barChartCanvas, barChartConfig)
+</script>
+
+{% endblock %}
