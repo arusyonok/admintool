@@ -6,13 +6,13 @@
       <title>AdminLTE 2 | Dashboard</title>
       <!-- Tell the browser to be responsive to screen width -->
       <meta content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no" name="viewport">
-      {% include "head.html" %}
+      {% include "layouts/head.html" %}
     </head>
     <body class="hold-transition sidebar-mini layout-fixed">
       <div class="wrapper">
-        {% include 'preloader.html' %}
-        {% include 'navbar.html' %}
-        {% include 'sidebar.html' %}
+        {% include 'layouts/preloader.html' %}
+        {% include 'layouts/navbar.html' %}
+        {% include 'layouts/sidebar.html' %}
 
         <!-- Content Wrapper. Contains page content -->
         <div class="content-wrapper">
@@ -20,9 +20,9 @@
         </div>
         <!-- /.content-wrapper -->
 
-        {% include 'footer.html' %}
+        {% include 'layouts/footer.html' %}
       </div>
       <!-- ./wrapper -->
-      {% include "footer_scripts.html" %}
+      {% include "layouts/footer_scripts.html" %}
     </body>
 </html>
