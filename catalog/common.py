@@ -15,6 +15,8 @@ class RecordTypes:
         "Transfer": TRANSFER,
     }
 
+    LIST = [EXPENSE, INCOME, TRANSFER]
+
 
 class WalletType:
     PERSONAL_WALLET = "personal_wallet"

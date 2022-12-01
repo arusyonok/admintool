@@ -1,0 +1,139 @@
+{% extends "layouts/index.html" %}
+
+{% block content %}
+
+  {% include "layouts/content_header.html" with header_title=header_title %}
+
+  <!-- Main content -->
+  <section class="content">
+    <div class="container-fluid">
+      <div class="row">
+        <div class="col-12">
+          <div class="card card-warning">
+            <div class="card-header">
+              <h3 class="card-title">Transfer Categories</h3>
+            </div>
+            <!-- ./card-header -->
+            <div class="card-body  p-0">
+              <table class="table table-hover">
+                <tbody>
+                {% for cat_name, sub_cats in transfer_categories.items %}
+                  <tr data-widget="expandable-table" aria-expanded="false">
+                    <td>
+                      <i class="expandable-table-caret fas fa-caret-right fa-fw"></i>
+                       {{ cat_name }}
+                    </td>
+                  </tr>
+                  <tr class="expandable-body">
+                    <td>
+                      <div class="p-0">
+                        <table class="table table-hover">
+                          <tbody>
+                          {% for sub_cat in sub_cats %}
+                            <tr>
+                              <td>{{ sub_cat }}</td>
+                            </tr>
+                          {% endfor %}
+                          </tbody>
+                        </table>
+                      </div>
+                    </td>
+                  </tr>
+                {% endfor %}
+                </tbody>
+              </table>
+            </div>
+            <!-- /.card-body -->
+          </div>
+          <!-- /.card -->
+        </div>
+      </div>
+      <!-- /.row -->
+      <div class="row">
+        <div class="col-12">
+          <div class="card card-success">
+            <div class="card-header">
+              <h3 class="card-title">Income Categories</h3>
+            </div>
+            <!-- ./card-header -->
+            <div class="card-body p-0">
+              <table class="table table-hover">
+                <tbody>
+                {% for cat_name, sub_cats in income_categories.items %}
+                  <tr data-widget="expandable-table" aria-expanded="false">
+                    <td>
+                      <i class="expandable-table-caret fas fa-caret-right fa-fw"></i>
+                       {{ cat_name }}
+                    </td>
+                  </tr>
+                  <tr class="expandable-body">
+                    <td>
+                      <div class="p-0">
+                        <table class="table table-hover">
+                          <tbody>
+                          {% for sub_cat in sub_cats %}
+                            <tr>
+                              <td>{{ sub_cat }}</td>
+                            </tr>
+                          {% endfor %}
+                          </tbody>
+                        </table>
+                      </div>
+                    </td>
+                  </tr>
+                {% endfor %}
+                </tbody>
+              </table>
+            </div>
+            <!-- /.card-body -->
+          </div>
+          <!-- /.card -->
+        </div>
+      </div>
+      <!-- /.row -->
+      <div class="row">
+        <div class="col-12">
+          <div class="card card-danger">
+            <div class="card-header">
+              <h3 class="card-title">Expense Categories</h3>
+            </div>
+            <!-- ./card-header -->
+            <div class="card-body p-0">
+              <table class="table  table-hover">
+                <tbody>
+                {% for cat_name, sub_cats in expense_categories.items %}
+                  <tr data-widget="expandable-table" aria-expanded="false">
+                    <td>
+                      <i class="expandable-table-caret fas fa-caret-right fa-fw"></i>
+                       {{ cat_name }}
+                    </td>
+                  </tr>
+                  <tr class="expandable-body">
+                    <td>
+                      <div class="p-0">
+                        <table class="table table-hover">
+                          <tbody>
+                          {% for sub_cat in sub_cats %}
+                            <tr>
+                              <td>{{ sub_cat }}</td>
+                            </tr>
+                          {% endfor %}
+                          </tbody>
+                        </table>
+                      </div>
+                    </td>
+                  </tr>
+                {% endfor %}
+                </tbody>
+              </table>
+            </div>
+            <!-- /.card-body -->
+          </div>
+          <!-- /.card -->
+        </div>
+      </div>
+      <!-- /.row -->
+    </div><!-- /.container-fluid -->
+  </section>
+  <!-- /.content -->
+{% endblock %}
