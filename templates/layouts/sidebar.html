@@ -17,7 +17,7 @@
           <img src="{% static 'dist/img/user2-.jpg' %}" class="img-circle elevation-2" alt="User Image">
         </div>
         <div class="info">
-          <a href="#" class="d-block">Alexander Pierce</a>
+          <a href="#" class="d-block">{{ user_display_name }}</a>
         </div>
       </div>
 
@@ -28,7 +28,7 @@
                with font-awesome or any other icon font library -->
           <li class="nav-item">
             <a href="{% url 'dashboard' %}" class="nav-link {% if url_name == 'dashboard' %}active{% endif %}">
-              <i class="far fa-house-user nav-icon "></i>
+              <i class="nav-icon fas fa-house-user"></i>
               <p>Dashboard</p>
             </a>
           </li>
