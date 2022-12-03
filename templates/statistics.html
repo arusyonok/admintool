@@ -123,7 +123,15 @@
        </div>
       </div>
       <div class="row">
-        <div class="col-md-6">
+        {% if expenses_by_category|length == 0 %}
+        <div class="col-md-12">
+          <div class="callout callout-danger">
+            <h5>No expenses data available</h5>
+            <p>Add records to your wallets or search with different criteria to view them here.</p>
+          </div>
+        </div>
+        {% else %}
+        <div class="col-md-4">
           <!-- DOUGHNUT CHART EXPENSES -->
           <div class="card card-danger">
             <div class="card-header">
@@ -140,9 +148,107 @@
               </div>
             </div>
           </div>
-          <!-- /.card -->
+          </div>
+        <div class="col-md-8">
+          <div class="card card-danger card-tabs">
+            <div class="card-header p-0 pt-1 border-bottom-0">
+              <ul class="nav nav-tabs" id="expenses-list-tab" role="tablist">
+                <li class="nav-item">
+                  <a class="nav-link active" id="expenses-by-category-tab" data-toggle="pill"
+                     href="#expenses-by-category" role="tab" aria-controls="expenses-by-category"
+                     aria-selected="true">By Category</a>
+                </li>
+                <li class="nav-item">
+                  <a class="nav-link" id="expenses-by-date-tab" data-toggle="pill"
+                     href="#expenses-by-date" role="tab" aria-controls="expenses-by-date"
+                     aria-selected="true">By Date</a>
+                </li>
+              </ul>
+            </div>
+            <div class="card-body">
+              <div class="tab-content" id="expenses-list-tabContent">
+                <div class="tab-pane fade show active" id="expenses-by-category" role="tabpanel" aria-labelledby="expenses-by-category-tab">
+                  <table class="table table-hover table-bordered">
+                    <tbody>
+                      {% for category_name, vals in expenses_by_category.items %}
+                      <tr data-widget="expandable-table" aria-expanded="false">
+                        <td>
+                          <i class="expandable-table-caret fas fa-caret-right fa-fw"></i>
+                          {{ category_name }}
+                        </td>
+                        <td>{{ vals.amount }}</td>
+                        <td>{{ vals.quantity }}</td>
+                      </tr>
+                      <tr class="expandable-body">
+                        <td colspan="3">
+                          <div class="p-0" style="">
+                            <table class="table table-hover table-bordered">
+                              <tbody>
+                                {% for sub_category_name, sub_category_vals in vals.sub_values.items %}
+                                <tr data-widget="expandable-table" aria-expanded="false">
+                                  <td>
+                                    <i class="expandable-table-caret fas fa-caret-right fa-fw"></i>
+                                    {{ sub_category_name }}
+                                  </td>
+                                  <td>{{ sub_category_vals.amount }}</td>
+                                  <td>{{ sub_category_vals.quantity }}</td>
+                                </tr>
+                                <tr class="expandable-body">
+                                  <td colspan="3">
+                                    <div class="p-0" style="">
+                                      <table class="table table-hover table-bordered">
+                                        <thead>
+                                          <tr>
+                                            <th>Title</th>
+                                            <th>Amount</th>
+                                            <th>Action</th>
+                                          </tr>
+                                        </thead>
+                                        <tbody>
+                                          {% for record in sub_category_vals.values %}
+                                          <tr>
+                                            <td>{{ record.title }}</td>
+                                            <td >{{ record.amount }}</td>
+                                            <td>
+                                              <a class="btn btn-info btn-sm"
+                                                 href="{% url 'personal-incomes:edit' record.personal_wallet.id record.id %}">
+                                                <i class="fas fa-pencil-alt"></i>
+                                              </a>
+                                            </td>
+                                          </tr>
+                                          {% endfor %}
+                                        </tbody>
+                                      </table>
+                                    </div>
+                                  </td>
+                                </tr>
+                              {% endfor %}
+                              </tbody>
+                            </table>
+                          </div>
+                        </td>
+                      </tr>
+                      {% endfor %}
+                    </tbody>
+                  </table>
+                </div>
+                <div class="tab-pane fade" id="expenses-by-date" role="tabpanel" aria-labelledby="expenses-by-date-tab">
+                  by date
+                </div>
+              </div>
+            </div>
+          </div>
         </div>
-        <div class="col-md-6">
+        {% endif %}
+        {% if incomes_by_category|length == 0 %}
+          <div class="col-md-12">
+            <div class="callout callout-danger">
+              <h5>No incomes data available</h5>
+              <p>Add records to your wallets or search with different criteria to view them here.</p>
+            </div>
+          </div>
+        {% else %}
+        <div class="col-md-4">
           <!-- DOUGHNUT CHART INCOMES -->
           <div class="card card-success">
             <div class="card-header">
@@ -159,8 +265,98 @@
               </div>
             </div>
           </div>
-          <!-- /.card -->
         </div>
+        <div class="col-md-8">
+          <div class="card card-success card-tabs">
+            <div class="card-header p-0 pt-1 border-bottom-0">
+              <ul class="nav nav-tabs" id="incomes-list-tab" role="tablist">
+                <li class="nav-item">
+                  <a class="nav-link active" id="incomes-by-category-tab" data-toggle="pill"
+                     href="#incomes-by-category" role="tab" aria-controls="incomes-by-category"
+                     aria-selected="true">By Category</a>
+                </li>
+                <li class="nav-item">
+                  <a class="nav-link" id="incomes-by-date-tab" data-toggle="pill"
+                     href="#incomes-by-date" role="tab" aria-controls="incomes-by-date"
+                     aria-selected="true">By Date</a>
+                </li>
+              </ul>
+            </div>
+            <div class="card-body">
+              <div class="tab-content" id="incomes-list-tabContent">
+                <div class="tab-pane fade show active" id="incomes-by-category" role="tabpanel" aria-labelledby="incomes-by-category-tab">
+                  <table class="table table-hover table-bordered">
+                    <tbody>
+                      {% for category_name, vals in incomes_by_category.items %}
+                      <tr data-widget="expandable-table" aria-expanded="false">
+                        <td>
+                          <i class="expandable-table-caret fas fa-caret-right fa-fw"></i>
+                          {{ category_name }}
+                        </td>
+                        <td>{{ vals.amount }}</td>
+                        <td>{{ vals.quantity }}</td>
+                      </tr>
+                      <tr class="expandable-body">
+                        <td colspan="3">
+                          <div class="p-0" style="">
+                            <table class="table table-hover table-bordered">
+                              <tbody>
+                                {% for sub_category_name, sub_category_vals in vals.sub_values.items %}
+                                <tr data-widget="expandable-table" aria-expanded="false">
+                                  <td>
+                                    <i class="expandable-table-caret fas fa-caret-right fa-fw"></i>
+                                    {{ sub_category_name }}
+                                  </td>
+                                  <td>{{ sub_category_vals.amount }}</td>
+                                  <td>{{ sub_category_vals.quantity }}</td>
+                                </tr>
+                                <tr class="expandable-body">
+                                  <td colspan="3">
+                                    <div class="p-0" style="">
+                                      <table class="table table-hover table-bordered">
+                                        <thead>
+                                          <tr>
+                                            <th>Title</th>
+                                            <th>Amount</th>
+                                            <th>Action</th>
+                                          </tr>
+                                        </thead>
+                                        <tbody>
+                                          {% for record in sub_category_vals.values %}
+                                          <tr>
+                                            <td>{{ record.title }}</td>
+                                            <td >{{ record.amount }}</td>
+                                            <td>
+                                              <a class="btn btn-info btn-sm"
+                                                 href="{% url 'personal-incomes:edit' record.personal_wallet.id record.id %}">
+                                                <i class="fas fa-pencil-alt"></i>
+                                              </a>
+                                            </td>
+                                          </tr>
+                                          {% endfor %}
+                                        </tbody>
+                                      </table>
+                                    </div>
+                                  </td>
+                                </tr>
+                              {% endfor %}
+                              </tbody>
+                            </table>
+                          </div>
+                        </td>
+                      </tr>
+                      {% endfor %}
+                    </tbody>
+                  </table>
+                </div>
+                <div class="tab-pane fade" id="incomes-by-date" role="tabpanel" aria-labelledby="incomes-by-date-tab">
+                  by date
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+        {% endif %}
       </div>
     </div>
   </section>

@@ -61,6 +61,9 @@ class StatisticsView(BasicViewOptions, views.TemplateView):
         context["expenses_datasets"] = json.dumps(expenses_datasets)
         context["incomes_datasets"] = json.dumps(incomes_datasets)
 
+        context["expenses_by_category"] = self.grouped_by_category(records, RecordTypes.EXPENSE)
+        context["incomes_by_category"] = self.grouped_by_category(records, RecordTypes.INCOME)
+
         return context
 
     def get_records(self, year=None, month=None, personal_wallet=None):
@@ -78,6 +81,51 @@ class StatisticsView(BasicViewOptions, views.TemplateView):
         records = PersonalWalletRecord.objects.filter(**params)
 
         return records
+
+    def grouped_by_category(self, records, record_type):
+        by_category = OrderedDict()
+        records = records.filter(record_type=record_type)
+
+        for rec in records:
+            sub_category_name = rec.sub_category.name
+            category_name = rec.sub_category.parent.name
+            if category_name not in by_category.keys():
+                by_category[category_name] = {
+                    "id": rec.sub_category.parent.id,
+                    "amount": 0,
+                    "quantity": 0,
+                    "per_day": 1,
+                    "sub_values": {}
+                }
+
+            if ("sub_values" in by_category[category_name].keys() and
+                    sub_category_name not in by_category[category_name]["sub_values"].keys()):
+                by_category[category_name]["sub_values"][sub_category_name] = {
+                    "id": rec.sub_category.id,
+                    "amount": 0,
+                    "quantity": 0,
+                    "per_day": 1,
+                    "values": []
+                }
+
+            by_category[category_name]["sub_values"][sub_category_name]["values"].append(rec)
+            amount = by_category[category_name]["sub_values"][sub_category_name]["amount"] + int(rec.amount)
+            by_category[category_name]["sub_values"][sub_category_name]["amount"] = amount
+
+            cat_amount = by_category[category_name]["amount"] + int(rec.amount)
+            by_category[category_name]["amount"] = cat_amount
+
+            by_category[category_name]["quantity"] += 1
+            by_category[category_name]["sub_values"][sub_category_name]["quantity"] += 1
+
+            per_day = by_category[category_name]["amount"] / by_category[category_name]["quantity"]
+            by_category[category_name]["per_day"] = per_day
+
+            per_day = by_category[category_name]["sub_values"][sub_category_name]["amount"] / \
+                      by_category[category_name]["sub_values"][sub_category_name]["quantity"]
+            by_category[category_name]["sub_values"][sub_category_name]["per_day"] = per_day
+
+        return by_category
 
     def datasets_for_chartj(self, records):
         expenses_records = records.filter(record_type=RecordTypes.EXPENSE).values("sub_category__parent__name").annotate(amount=Sum("amount"))
