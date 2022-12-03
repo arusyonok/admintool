@@ -51,7 +51,6 @@ class PersonalRecordView(BasicViewOptions, views.TemplateView, WalletViewDetails
         wallet = self.get_wallet_or_404()
         context["records"] = PersonalWalletRecord.objects.filter(personal_wallet=wallet.pk,
                                                                  record_type=self.record_type, user=self.request.user)
-        context['header_title'] = self.header_title
         context['wallet'] = wallet
         return context
 
@@ -76,7 +75,6 @@ class PersonalRecordCreateView(BasicViewOptions, views.CreateView, WalletViewDet
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
         context['categories'] = Category.objects.filter(type=self.record_type)
-        context['header_title'] = self.header_title
         return context
 
     def form_valid(self, form):
@@ -113,7 +111,6 @@ class PersonalRecordUpdateView(BasicViewOptions, views.UpdateView):
         context = super().get_context_data(**kwargs)
         context['categories'] = Category.objects.filter(type=self.record_type)
         context['parent_category'] = self.object.category
-        context['header_title'] = self.header_title
         return context
 
     def get_success_url(self):
@@ -161,7 +158,6 @@ class GroupExpensesView(BasicViewOptions, views.TemplateView, WalletViewDetails)
         context = super().get_context_data(**kwargs)
         wallet = self.get_wallet_or_404()
         context["records"] = GroupWalletRecord.objects.filter(group_wallet=wallet.pk)
-        context['header_title'] = self.header_title
         context['wallet'] = wallet
         return context
 
@@ -177,7 +173,6 @@ class GroupExpenseCreateView(BasicViewOptions, views.CreateView, WalletViewDetai
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
         context['categories'] = Category.objects.filter(type=RecordTypes.EXPENSE)
-        context['header_title'] = self.header_title
         return context
 
     def get_form_kwargs(self):
@@ -205,7 +200,6 @@ class GroupExpenseUpdateView(BasicViewOptions, views.UpdateView, WalletViewDetai
         context = super().get_context_data(**kwargs)
         context['categories'] = Category.objects.filter(type=RecordTypes.EXPENSE)
         context['parent_category'] = self.object.category
-        context['header_title'] = self.header_title
         return context
 
     def get_form_kwargs(self):
@@ -236,7 +230,6 @@ class GroupBalanceView(BasicViewOptions, views.TemplateView):
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
         datasets = self._create_datasets_for_chartj()
-        context['header_title'] = self.header_title
         context['datasets'] = json.dumps(datasets)
         return context
 

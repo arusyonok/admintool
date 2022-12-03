@@ -4,17 +4,8 @@ from core.utils import get_category_tree
 from catalog.common import RecordTypes
 
 
-class HeaderClass:
+class BasicViewOptions(LoginRequiredMixin, views.base.ContextMixin):
     header_title = None
-
-
-class BasicViewOptions(LoginRequiredMixin, HeaderClass):
-    pass
-
-
-class DashboardView(BasicViewOptions, views.TemplateView):
-    template_name = 'dashboard.html'
-    header_title = "Dashboard"
 
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
@@ -23,13 +14,17 @@ class DashboardView(BasicViewOptions, views.TemplateView):
         return context
 
 
+class DashboardView(BasicViewOptions, views.TemplateView):
+    template_name = 'dashboard.html'
+    header_title = "Dashboard"
+
+
 class CategoryView(BasicViewOptions, views.TemplateView):
     template_name = 'categories.html'
     header_title = "Categories"
 
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
-        context['header_title'] = self.header_title
         context['expense_categories'] = get_category_tree(category_type=RecordTypes.EXPENSE)
         context['income_categories'] = get_category_tree(category_type=RecordTypes.INCOME)
         context['transfer_categories'] = get_category_tree(category_type=RecordTypes.TRANSFER)
