@@ -8,24 +8,28 @@
   <section class="content">
     <div class="container-fluid">
       <div class="row">
-          <div class="col-12">
-            <div class="card card-info">
-              <div class="card-header">
-                <h3 class="card-title">{{ header_title }}</h3>
-              </div>
-              <!-- /.card-header -->
-              <div class="card-body">
-                <div class="chart">
-                  <canvas id="barChart" data-datasets="{{ datasets }}"></canvas>
-                </div>
-              </div>
-              <!-- /.card-body -->
+        <div class="col-12">
+          {% if datasets_exist is False %}
+            <div class="callout callout-info">
+              <h5>No balance data available</h5>
+              <p>Add records to your wallet to view some charts!</p>
             </div>
-            <!-- /.card -->
+          {% else %}
+          <div class="card card-info">
+            <div class="card-header">
+              <h3 class="card-title">{{ header_title }}</h3>
+            </div>
+            <!-- /.card-header -->
+            <div class="card-body">
+              <div class="chart">
+                <canvas id="barChart" data-datasets="{{ datasets }}"></canvas>
+              </div>
+            </div>
+            <!-- /.card-body -->
           </div>
-        <!-- /.col -->
+          {% endif %}
+        </div>
       </div>
-      <!-- /.row -->
     </div><!-- /.container-fluid -->
   </section>
   <!-- /.content -->

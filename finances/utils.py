@@ -54,8 +54,14 @@ def get_sub_grouped_people_and_records_of_wallet(wallet_id: int) -> typing.List[
         "paid_for_people", "paid_by_people", "records"
     )
 
-    sub_grouped_people_records_combo = check_edge_cases(list(sub_grouped_people_records_combo))
     return_dataclass_list = []
+
+    # here basically we check if there are any records at all, by checking inside the query we got from upper code
+    if len(sub_grouped_people_records_combo) == 1 and sub_grouped_people_records_combo[0]["paid_for_people"] is None:
+        return return_dataclass_list
+
+    sub_grouped_people_records_combo = check_edge_cases(list(sub_grouped_people_records_combo))
+
     for combo in sub_grouped_people_records_combo:
         records = GroupWalletRecord.objects.filter(id__in=combo["records"])
         return_dataclass_list.append(

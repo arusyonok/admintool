@@ -230,12 +230,15 @@ class GroupBalanceView(BasicViewOptions, views.TemplateView):
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
         datasets = self._create_datasets_for_chartj()
+        context['datasets_exist'] = len(datasets) >= 1
         context['datasets'] = json.dumps(datasets)
         return context
 
     def _create_datasets_for_chartj(self):
         balances = get_balances(self.request.user.id, self.kwargs.get("wallet_id"))
 
+        if not balances:
+            return []
         labels = []
         positive_data = []
         negative_data = []
