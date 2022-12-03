@@ -21,11 +21,11 @@ class WalletViewDetails:
     _is_group_wallet_type = False
 
     def get_wallet_or_404(self):
-        wallet_pk = self.kwargs.get("wallet_pk")
+        wallet_id = self.kwargs.get("wallet_id")
         self.check_wallet_type()
         try:
             # TODO: Make this nicer error handling
-            wallet = Wallet.objects.get(pk=wallet_pk, users=self.request.user)
+            wallet = Wallet.objects.get(pk=wallet_id, users=self.request.user)
             if self._is_personal_wallet_type and not wallet.is_personal_wallet:
                 raise Wallet.DoesNotExist
             if self._is_group_wallet_type and not wallet.is_group_wallet:
@@ -85,7 +85,7 @@ class PersonalRecordCreateView(BasicViewOptions, views.CreateView, WalletViewDet
         return super(PersonalRecordCreateView, self).form_valid(form)
 
     def get_success_url(self):
-        return reverse_lazy(self.success_url_prefix, args=[self.kwargs.get("wallet_pk")])
+        return reverse_lazy(self.success_url_prefix, args=[self.kwargs.get("wallet_id")])
 
 
 class ExpenseCreateView(PersonalRecordCreateView):
@@ -117,7 +117,7 @@ class PersonalRecordUpdateView(BasicViewOptions, views.UpdateView):
         return context
 
     def get_success_url(self):
-        return reverse_lazy(self.success_url_prefix, args=[self.kwargs.get("wallet_pk")])
+        return reverse_lazy(self.success_url_prefix, args=[self.kwargs.get("wallet_id")])
 
 
 class ExpenseUpdateView(PersonalRecordUpdateView):
@@ -141,7 +141,7 @@ class PersonalRecordDeleteView(BasicViewOptions, views.DeleteView):
     success_url_prefix = None
 
     def get_success_url(self):
-        return reverse_lazy(self.success_url_prefix, args=[self.kwargs.get("wallet_pk")])
+        return reverse_lazy(self.success_url_prefix, args=[self.kwargs.get("wallet_id")])
 
 
 class ExpenseDeleteView(PersonalRecordDeleteView):
@@ -182,7 +182,7 @@ class GroupExpenseCreateView(BasicViewOptions, views.CreateView, WalletViewDetai
 
     def get_form_kwargs(self):
         kwargs = super(GroupExpenseCreateView, self).get_form_kwargs()
-        kwargs["wallet_pk"] = self.kwargs.get("wallet_pk")
+        kwargs["wallet_id"] = self.kwargs.get("wallet_id")
         return kwargs
 
     def form_valid(self, form):
@@ -190,7 +190,7 @@ class GroupExpenseCreateView(BasicViewOptions, views.CreateView, WalletViewDetai
         return super(GroupExpenseCreateView, self).form_valid(form)
 
     def get_success_url(self):
-        return reverse_lazy(self.success_url_prefix, args=[self.kwargs.get("wallet_pk")])
+        return reverse_lazy(self.success_url_prefix, args=[self.kwargs.get("wallet_id")])
 
 
 class GroupExpenseUpdateView(BasicViewOptions, views.UpdateView, WalletViewDetails):
@@ -210,7 +210,7 @@ class GroupExpenseUpdateView(BasicViewOptions, views.UpdateView, WalletViewDetai
 
     def get_form_kwargs(self):
         kwargs = super(GroupExpenseUpdateView, self).get_form_kwargs()
-        kwargs["wallet_pk"] = self.kwargs.get("wallet_pk")
+        kwargs["wallet_id"] = self.kwargs.get("wallet_id")
         return kwargs
 
     def form_valid(self, form):
@@ -218,7 +218,7 @@ class GroupExpenseUpdateView(BasicViewOptions, views.UpdateView, WalletViewDetai
         return super(GroupExpenseUpdateView, self).form_valid(form)
 
     def get_success_url(self):
-        return reverse_lazy(self.success_url_prefix, args=[self.kwargs.get("wallet_pk")])
+        return reverse_lazy(self.success_url_prefix, args=[self.kwargs.get("wallet_id")])
 
 
 class GroupExpenseDeleteView(BasicViewOptions, views.DeleteView):
@@ -226,7 +226,7 @@ class GroupExpenseDeleteView(BasicViewOptions, views.DeleteView):
     success_url_prefix = "group-expenses:view"
 
     def get_success_url(self):
-        return reverse_lazy(self.success_url_prefix, args=[self.kwargs.get("wallet_pk")])
+        return reverse_lazy(self.success_url_prefix, args=[self.kwargs.get("wallet_id")])
 
 
 class GroupBalanceView(BasicViewOptions, views.TemplateView):
@@ -241,7 +241,7 @@ class GroupBalanceView(BasicViewOptions, views.TemplateView):
         return context
 
     def _create_datasets_for_chartj(self):
-        balances = get_balances(self.request.user.id, self.kwargs.get("wallet_pk"))
+        balances = get_balances(self.request.user.id, self.kwargs.get("wallet_id"))
 
         labels = []
         positive_data = []

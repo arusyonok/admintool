@@ -64,10 +64,10 @@ class GroupExpenseCreateForm(forms.ModelForm):
         model = GroupWalletRecord
         fields = ["title", "amount", "paid_by", "paid_for_users", "record_type", "sub_category"]
 
-    def __init__(self, wallet_pk=None, *args, **kwargs):
+    def __init__(self, wallet_id=None, *args, **kwargs):
         super(GroupExpenseCreateForm, self).__init__(*args, **kwargs)
         choices_list = []
-        wallet_users = Profile.objects.filter(wallet__id=wallet_pk)
+        wallet_users = Profile.objects.filter(wallet__id=wallet_id)
         for user in wallet_users:
             choices_list.append((user.id, user))
         self.fields["paid_for_users"].choices = choices_list
@@ -88,10 +88,10 @@ class GroupExpenseUpdateForm(forms.ModelForm):
         model = GroupWalletRecord
         fields = ["title", "amount", "paid_by", "paid_for_users", "record_type", "sub_category"]
 
-    def __init__(self, wallet_pk=None, *args, **kwargs):
+    def __init__(self, wallet_id=None, *args, **kwargs):
         super(GroupExpenseUpdateForm, self).__init__(*args, **kwargs)
         choices_list = []
-        wallet_users = Profile.objects.filter(wallet__id=wallet_pk)
+        wallet_users = Profile.objects.filter(wallet__id=wallet_id)
         for user in wallet_users:
             choices_list.append((user.id, user))
         self.fields["paid_for_users"].choices = choices_list

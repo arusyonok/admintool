@@ -37,9 +37,9 @@ class SubGroupedPeopleAndRecords:
         return debt_values
 
 
-def get_sub_grouped_people_and_records_of_wallet(wallet_pk: int) -> typing.List[SubGroupedPeopleAndRecords]:
+def get_sub_grouped_people_and_records_of_wallet(wallet_id: int) -> typing.List[SubGroupedPeopleAndRecords]:
     participating_people_subquery = GroupWalletRecord.objects.filter(
-        group_wallet_id=wallet_pk, id=OuterRef("pk")
+        group_wallet_id=wallet_id, id=OuterRef("pk")
     ).annotate(
         paid_for_people=ArrayAgg('paid_for_users'),
     ).values("paid_for_people")
@@ -63,7 +63,7 @@ def get_sub_grouped_people_and_records_of_wallet(wallet_pk: int) -> typing.List[
                 people=combo["paid_for_people"],
                 records=records,
                 total_amount=sum(records.values_list("amount", flat=True)),
-                wallet_id=wallet_pk,
+                wallet_id=wallet_id,
             )
         )
     return return_dataclass_list
@@ -154,8 +154,8 @@ def calculate_and_set_debt_values(debt_values, wallet_id):
         raise ValueError("Something went wrong with balance calculation")
 
 
-def calculate_balances(wallet_pk):
-    sub_grouped_people_and_records = get_sub_grouped_people_and_records_of_wallet(wallet_pk)
+def calculate_balances(wallet_id):
+    sub_grouped_people_and_records = get_sub_grouped_people_and_records_of_wallet(wallet_id)
 
     for data in sub_grouped_people_and_records:
         debt_values = data.sorted_debt_values
@@ -163,11 +163,11 @@ def calculate_balances(wallet_pk):
         calculate_and_set_debt_values(debt_values, data.wallet_id)
 
 
-def get_balances(current_user, wallet_pk):
-    calculate_balances(wallet_pk)  # TODO: move this somewhere sensible
+def get_balances(current_user, wallet_id):
+    calculate_balances(wallet_id)  # TODO: move this somewhere sensible
     user_balances = Balance.objects.filter(
         Q(loaned_from_id=current_user) | Q(loaned_to_id=current_user),
-        group_wallet_id=wallet_pk
+        group_wallet_id=wallet_id
     )
     balances = []
     for balance in user_balances:
