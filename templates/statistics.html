@@ -1,0 +1,172 @@
+{% extends "layouts/index.html" %}
+{% load static from static %}
+
+{% block content %}
+
+  {% include "layouts/content_header.html" with header_title=header_title %}
+
+  <!-- Main content -->
+  <section class="content">
+    <div class="container-fluid">
+      <div class="row">
+        <div class="col-md-3">
+          <div class="card card-outline card-warning">
+            <div class="card-header">
+              <h3 class="card-title">Filter Personal Wallet Records</h3>
+              <div class="card-tools">
+                <a class="text-warning"
+                    href="
+                    {% if active_year and active_month %}
+                    {% url 'statistics:year-month' year=active_year month=active_month %}
+                    {% elif active_year %}
+                    {% url 'statistics:year' year=active_year %}
+                    {% elif active_month %}
+                    {% url 'statistics:month' month=active_month %}
+                    {% else %}
+                    {% url 'statistics:view' %}
+                    {% endif %}"><i class="fas fa-broom"></i> Reset</a>
+              </div>
+            </div>
+            <div class="card-body p-0">
+              <ul class="nav nav-pills flex-column">
+                {% for wallet in personal_wallets %}
+                <li class="nav-item {% if active_personal_wallet and active_personal_wallet == wallet.id %}bg-warning{% endif %}">
+                  <a href="
+                  {% if active_year and active_month %}
+                  {% url 'statistics:personal-wallet-year-month' personal_wallet_id=wallet.id year=active_year month=active_month %}
+                  {% elif active_year %}
+                  {% url 'statistics:personal-wallet-year' personal_wallet_id=wallet.id year=active_year %}
+                  {% elif active_month %}
+                  {% url 'statistics:personal-wallet-month' personal_wallet_id=wallet.id month=active_month %}
+                  {% else %}
+                  {% url 'statistics:personal-wallet' personal_wallet_id=wallet.id %}
+                  {% endif %}" class="nav-link">
+                    <i class="fas fa-coins text-warning"></i> {{ wallet.title }}
+                  </a>
+                </li>
+                {% endfor %}
+              </ul>
+            </div>
+            <!-- /.card-body -->
+          </div>
+        </div>
+        <div class="col-md-3">
+          <div class="card card-outline card-success">
+            <div class="card-header">
+              <h3 class="card-title">Include Group Wallet Records</h3>
+            </div>
+            <div class="card-body p-0">
+              <ul class="nav nav-pills flex-column">
+                {% for wallet in group_wallets %}
+                <li class="nav-item">
+                  <a href="#" class="nav-link">
+                    <i class="fas fa-wallet text-success"></i> {{ wallet.title }}
+                  </a>
+                </li>
+                {% endfor %}
+              </ul>
+            </div>
+            <!-- /.card-body -->
+          </div>
+        </div>
+        <div class="col-md-6">
+          <div class="card card-outline card-info">
+            <div class="card-header">
+              <h3 class="card-title">Dates</h3>
+              <div class="card-tools">
+                <a class="text-info"
+                    href="
+                    {% if active_personal_wallet %}
+                    {% url 'statistics:personal-wallet' personal_wallet_id=active_personal_wallet %}
+                    {% else %}
+                    {% url 'statistics:view' %}
+                    {% endif %}"><i class="fas fa-broom"></i> Reset</a>
+              </div>
+            </div>
+            <div class="card-body">
+              <div class="form-group">
+                <label for="year">Year:</label>
+                {% for year in years %}
+                <a type="button" class="btn {% if active_year and active_year == year %}btn-info disabled{% else %}btn-default{% endif %}"
+                   href="
+                  {% if active_personal_wallet and active_month %}
+                  {% url 'statistics:personal-wallet-year-month' personal_wallet_id=active_personal_wallet year=year month=active_month %}
+                  {% elif active_personal_wallet %}
+                  {% url 'statistics:personal-wallet-year' personal_wallet_id=active_personal_wallet year=year %}
+                  {% elif active_month %}
+                  {% url 'statistics:year-month' year=year month=active_month %}
+                  {% else %}
+                  {% url 'statistics:year' year=year %}
+                  {% endif %}"
+                   id="year">{{ year }}</a>
+                {% endfor %}
+              </div>
+              <div class="form-group">
+                <label>Month:</label>
+                {% for number, name in months.items %}
+                <a type="button" class="btn {% if active_month and active_month == number %}btn-info disabled{% else %}btn-default{% endif %}"
+                   href="
+                  {% if active_personal_wallet and active_year %}
+                  {% url 'statistics:personal-wallet-year-month' personal_wallet_id=active_personal_wallet year=active_year month=number %}
+                  {% elif active_personal_wallet %}
+                  {% url 'statistics:personal-wallet-month' personal_wallet_id=active_personal_wallet month=number %}
+                  {% elif active_year %}
+                  {% url 'statistics:year-month' year=active_year month=number %}
+                  {% else %}
+                  {% url 'statistics:month' month=number %}
+                  {% endif %}"
+                   id="month">{{ name }}</a>
+                {% endfor %}
+              </div>
+            </div>
+          </div>
+       </div>
+      </div>
+      <div class="row">
+        <div class="col-md-6">
+          <!-- DOUGHNUT CHART EXPENSES -->
+          <div class="card card-danger">
+            <div class="card-header">
+              <h3 class="card-title">Expenses</h3>
+              <div class="card-tools">
+                <button type="button" class="btn btn-tool" data-card-widget="collapse">
+                  <i class="fas fa-minus"></i>
+                </button>
+              </div>
+            </div>
+            <div class="card-body">
+              <div class="chart">
+                <canvas id="doughnutChartExpenses" data-datasets="{{ expenses_datasets }}"></canvas>
+              </div>
+            </div>
+          </div>
+          <!-- /.card -->
+        </div>
+        <div class="col-md-6">
+          <!-- DOUGHNUT CHART INCOMES -->
+          <div class="card card-success">
+            <div class="card-header">
+              <h3 class="card-title">Incomes</h3>
+              <div class="card-tools">
+                <button type="button" class="btn btn-tool" data-card-widget="collapse">
+                  <i class="fas fa-minus"></i>
+                </button>
+              </div>
+            </div>
+            <div class="card-body">
+              <div class="chart">
+                <canvas id="doughnutChartIncomes" data-datasets="{{ incomes_datasets }}"></canvas>
+              </div>
+            </div>
+          </div>
+          <!-- /.card -->
+        </div>
+      </div>
+    </div>
+  </section>
+  <!-- /.content -->
+{% endblock %}
+
+{% block javascript %}
+<script src="{% static 'dist/js/statistics.js' %}"></script>
+{% endblock %}

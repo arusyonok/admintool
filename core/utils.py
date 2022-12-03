@@ -1,3 +1,4 @@
+import calendar
 from catalog.models import Category
 from catalog.common import RecordTypes
 
@@ -16,3 +17,11 @@ def get_category_tree(category_type=None):
             categories[cat.name].append(sub_cat.name)
 
     return categories
+
+
+def get_months():
+    months = {}
+    for i in range(1, 13):
+        months[i] = calendar.month_abbr[i]
+
+    return months

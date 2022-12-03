@@ -38,6 +38,12 @@
               <p>Categories</p>
             </a>
           </li>
+          <li class="nav-item">
+            <a href="{% url 'statistics:view' %}" class="nav-link {% if url_name == 'statistics' %}active{% endif %}">
+              <i class="nav-icon fas fa-chart-pie"></i>
+              <p>Statistics</p>
+            </a>
+          </li>
           {% for wallet in user.personal_wallets %}
           <li class="nav-item ">
             <a href="#" class="nav-link">
