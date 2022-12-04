@@ -38,7 +38,7 @@ class CategoryView(BasicViewOptions, views.TemplateView):
 
 
 class StatisticsView(BasicViewOptions, views.TemplateView):
-    template_name = 'statistics.html'
+    template_name = 'statistics/main.html'
     header_title = "Statistics"
     active_month = None
     active_year = None
