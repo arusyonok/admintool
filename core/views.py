@@ -40,6 +40,9 @@ class CategoryView(BasicViewOptions, views.TemplateView):
 class StatisticsView(BasicViewOptions, views.TemplateView):
     template_name = 'statistics.html'
     header_title = "Statistics"
+    active_month = None
+    active_year = None
+    active_personal_wallet = None
 
     def get_context_data(self, *args, **kwargs):
         context = super().get_context_data(**kwargs)
@@ -49,14 +52,15 @@ class StatisticsView(BasicViewOptions, views.TemplateView):
         context["personal_wallets"] = self.request.user.personal_wallets
         context["group_wallets"] = self.request.user.group_wallets
 
-        active_year = self.kwargs.get("year", None)
-        active_month = self.kwargs.get("month", None)
-        active_personal_wallet = self.kwargs.get("personal_wallet_id", None)
-        context["active_year"] = int(active_year) if active_year else None
-        context["active_month"] = int(active_month) if active_month else None
-        context["active_personal_wallet"] = int(active_personal_wallet) if active_personal_wallet else None
+        self.active_year = int(self.kwargs.get("year")) if self.kwargs.get("year") else None
+        self.active_month = int(self.kwargs.get("month")) if self.kwargs.get("month") else None
+        self.active_personal_wallet = int(self.kwargs.get("personal_wallet_id")) if self.kwargs.get("personal_wallet_id") else None
 
-        records = self.get_records(year=active_year, month=active_month, personal_wallet=active_personal_wallet)
+        context["active_year"] = self.active_year
+        context["active_month"] = self.active_month
+        context["active_personal_wallet"] = self.active_personal_wallet
+
+        records = self.get_records()
         expenses_datasets, incomes_datasets = self.datasets_for_chartj(records)
         context["expenses_datasets"] = json.dumps(expenses_datasets)
         context["incomes_datasets"] = json.dumps(incomes_datasets)
@@ -66,17 +70,17 @@ class StatisticsView(BasicViewOptions, views.TemplateView):
 
         return context
 
-    def get_records(self, year=None, month=None, personal_wallet=None):
+    def get_records(self):
         params = {"user_id": self.request.user.id}
 
-        if year:
-            params["date__year"] = year
+        if self.active_year:
+            params["date__year"] = self.active_year
 
-        if month:
-            params["date__month"] = month
+        if self.active_month:
+            params["date__month"] = self.active_month
 
-        if personal_wallet:
-            params["personal_wallet_id"] = personal_wallet
+        if self.active_personal_wallet:
+            params["personal_wallet_id"] = self.active_personal_wallet
 
         records = PersonalWalletRecord.objects.filter(**params)
 
