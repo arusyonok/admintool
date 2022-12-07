@@ -1,12 +1,27 @@
 import json
+import typing
 
 from django.views import generic as views
-from django.db.models import Sum
 from django.contrib.auth.mixins import LoginRequiredMixin
 from core.utils import get_category_tree, get_months
 from catalog.common import RecordTypes
 from collections import OrderedDict
 from finances.models import PersonalWalletRecord
+from dataclasses import dataclass
+
+
+@dataclass
+class RecordsDisplayData:
+    amount: int = 0
+    quantity: int = 0
+    sub_values: typing.Optional[typing.Dict] = None
+    values: typing.Optional[typing.List] = None
+
+    def __post_init__(self):
+        if self.sub_values and self.values:
+            raise Exception("Sub Values OR Values must be set! Not Both!")
+        if self.sub_values is None and self.values is None:
+            raise Exception("Either/Or Sub Values or Values must be set!")
 
 
 class BasicViewOptions(LoginRequiredMixin, views.base.ContextMixin):
@@ -98,45 +113,30 @@ class StatisticsView(BasicViewOptions, views.TemplateView):
             sub_category_name = rec.sub_category.name
             category_name = rec.sub_category.parent.name
             if category_name not in by_category.keys():
-                by_category[category_name] = {
-                    "id": rec.sub_category.parent.id,
-                    "amount": 0,
-                    "quantity": 0,
-                    "per_day": 1,
-                    "sub_values": {}
-                }
+                by_category[category_name] = RecordsDisplayData(sub_values={})
 
-            if ("sub_values" in by_category[category_name].keys() and
-                    sub_category_name not in by_category[category_name]["sub_values"].keys()):
-                by_category[category_name]["sub_values"][sub_category_name] = {
-                    "id": rec.sub_category.id,
-                    "amount": 0,
-                    "quantity": 0,
-                    "per_day": 1,
-                    "values": []
-                }
+            if (isinstance(by_category[category_name].sub_values, dict) and
+                    sub_category_name not in by_category[category_name].sub_values.keys()):
+                by_category[category_name].sub_values[sub_category_name] = RecordsDisplayData(values=[])
 
-            by_category[category_name]["sub_values"][sub_category_name]["values"].append(rec)
-            amount = by_category[category_name]["sub_values"][sub_category_name]["amount"] + int(rec.amount)
-            by_category[category_name]["sub_values"][sub_category_name]["amount"] = amount
+            # append record to its rightful place in the tree
+            by_category[category_name].sub_values[sub_category_name].values.append(rec)
 
-            cat_amount = by_category[category_name]["amount"] + int(rec.amount)
-            by_category[category_name]["amount"] = cat_amount
+            # calculate the amounts
+            sub_category_amount = by_category[category_name].sub_values[sub_category_name].amount + int(rec.amount)
+            by_category[category_name].sub_values[sub_category_name].amount = sub_category_amount
 
-            by_category[category_name]["quantity"] += 1
-            by_category[category_name]["sub_values"][sub_category_name]["quantity"] += 1
+            category_amount = by_category[category_name].amount + int(rec.amount)
+            by_category[category_name].amount = category_amount
 
-            per_day = by_category[category_name]["amount"] / by_category[category_name]["quantity"]
-            by_category[category_name]["per_day"] = per_day
-
-            per_day = by_category[category_name]["sub_values"][sub_category_name]["amount"] / \
-                      by_category[category_name]["sub_values"][sub_category_name]["quantity"]
-            by_category[category_name]["sub_values"][sub_category_name]["per_day"] = per_day
+            # calculate quantities
+            by_category[category_name].quantity += 1
+            by_category[category_name].sub_values[sub_category_name].quantity += 1
 
         return by_category
 
     def create_datasets_for_chartj(self, records):
-        records_dict = OrderedDict({key: values["amount"] for key, values in records.items()})
+        records_dict = OrderedDict({key: values.amount for key, values in records.items()})
 
         labels = list(records_dict.keys()) or []
         data = list(records_dict.values()) or []
