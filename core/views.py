@@ -61,12 +61,16 @@ class StatisticsView(BasicViewOptions, views.TemplateView):
         context["active_personal_wallet"] = self.active_personal_wallet
 
         records = self.get_records()
-        expenses_datasets, incomes_datasets = self.datasets_for_chartj(records)
-        context["expenses_datasets"] = json.dumps(expenses_datasets)
-        context["incomes_datasets"] = json.dumps(incomes_datasets)
 
-        context["expenses_by_category"] = self.grouped_by_category(records, RecordTypes.EXPENSE)
-        context["incomes_by_category"] = self.grouped_by_category(records, RecordTypes.INCOME)
+        expenses_by_category = self.grouped_by_category_for_table(records, RecordTypes.EXPENSE)
+        expenses_datasets = self.create_datasets_for_chartj(expenses_by_category)
+        context["expenses_by_category"] = self.grouped_by_category_for_table(records, RecordTypes.EXPENSE)
+        context["expenses_datasets"] = json.dumps(expenses_datasets)
+
+        incomes_by_category = self.grouped_by_category_for_table(records, RecordTypes.INCOME)
+        incomes_datasets = self.create_datasets_for_chartj(incomes_by_category)
+        context["incomes_by_category"] = incomes_by_category
+        context["incomes_datasets"] = json.dumps(incomes_datasets)
 
         return context
 
@@ -86,7 +90,7 @@ class StatisticsView(BasicViewOptions, views.TemplateView):
 
         return records
 
-    def grouped_by_category(self, records, record_type):
+    def grouped_by_category_for_table(self, records, record_type):
         by_category = OrderedDict()
         records = records.filter(record_type=record_type)
 
@@ -131,17 +135,8 @@ class StatisticsView(BasicViewOptions, views.TemplateView):
 
         return by_category
 
-    def datasets_for_chartj(self, records):
-        expenses_records = records.filter(record_type=RecordTypes.EXPENSE).values("sub_category__parent__name").annotate(amount=Sum("amount"))
-        incomes_records = records.filter(record_type=RecordTypes.INCOME).values("sub_category__parent__name").annotate(amount=Sum("amount"))
-
-        expenses_datasets = self._create_dataset(expenses_records)
-        income_datasets = self._create_dataset(incomes_records)
-
-        return expenses_datasets, income_datasets
-
-    def _create_dataset(self, records):
-        records_dict = OrderedDict({rec["sub_category__parent__name"]: str(rec["amount"]) for rec in records})
+    def create_datasets_for_chartj(self, records):
+        records_dict = OrderedDict({key: values["amount"] for key, values in records.items()})
 
         labels = list(records_dict.keys()) or []
         data = list(records_dict.values()) or []
