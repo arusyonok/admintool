@@ -1,5 +1,6 @@
 import json
 import typing
+import calendar
 
 from django.views import generic as views
 from django.contrib.auth.mixins import LoginRequiredMixin
@@ -82,10 +83,20 @@ class StatisticsView(BasicViewOptions, views.TemplateView):
         context["expenses_by_category"] = expenses_by_category
         context["expenses_by_cat_datasets"] = json.dumps(expenses_by_cat_datasets)
 
+        expenses_by_date = self.grouped_by_date_for_table(records, RecordTypes.EXPENSE)
+        expenses_by_date_datasets = self.create_datasets_for_chartj(expenses_by_date)
+        context["expenses_by_date"] = expenses_by_date
+        context["expenses_by_date_datasets"] = json.dumps(expenses_by_date_datasets)
+
         incomes_by_category = self.grouped_by_category_for_table(records, RecordTypes.INCOME)
         incomes_datasets = self.create_datasets_for_chartj(incomes_by_category)
         context["incomes_by_category"] = incomes_by_category
         context["incomes_by_cat_datasets"] = json.dumps(incomes_datasets)
+
+        incomes_by_date = self.grouped_by_date_for_table(records, RecordTypes.INCOME)
+        incomes_by_date_datasets = self.create_datasets_for_chartj(incomes_by_date)
+        context["incomes_by_date"] = incomes_by_date
+        context["incomes_by_date_datasets"] = json.dumps(incomes_by_date_datasets)
 
         return context
 
@@ -134,6 +145,87 @@ class StatisticsView(BasicViewOptions, views.TemplateView):
             by_category[category_name].sub_values[sub_category_name].quantity += 1
 
         return by_category
+
+    def grouped_by_date_for_table(self, records, record_type):
+        grouped_by_date = OrderedDict()
+        records = records.filter(record_type=record_type).order_by("date")
+
+        for rec in records:
+            year = rec.date.year
+            month = rec.date.month
+            day = rec.date.day
+            month_name_key = self.month_name_key(month, year)
+            day_name_key = self.day_name_key(day, month, year)
+
+            if year not in grouped_by_date.keys():
+                grouped_by_date[year] = RecordsDisplayData(sub_values={})
+
+            if (isinstance(grouped_by_date[year].sub_values, dict) and
+                    month_name_key not in grouped_by_date[year].sub_values.keys()):
+
+                grouped_by_date[year].sub_values[month_name_key] = RecordsDisplayData(sub_values={})
+
+            if (isinstance(grouped_by_date[year].sub_values[month_name_key].sub_values, dict) and
+                    day_name_key not in grouped_by_date[year].sub_values[month_name_key].sub_values.keys()):
+                grouped_by_date[year].sub_values[month_name_key].sub_values[day_name_key] = RecordsDisplayData(values=[])
+
+            grouped_by_date[year].sub_values[month_name_key].sub_values[day_name_key].values.append(rec)
+
+            # calculate the amounts
+            day_amount = grouped_by_date[year].sub_values[month_name_key].sub_values[day_name_key].amount + int(rec.amount)
+            grouped_by_date[year].sub_values[month_name_key].sub_values[day_name_key].amount = day_amount
+
+            month_amount = grouped_by_date[year].sub_values[month_name_key].amount + int(rec.amount)
+            grouped_by_date[year].sub_values[month_name_key].amount = month_amount
+
+            year_amount = grouped_by_date[year].amount + int(rec.amount)
+            grouped_by_date[year].amount = year_amount
+
+            # calculate quantities
+            grouped_by_date[year].quantity += 1
+            grouped_by_date[year].sub_values[month_name_key].quantity += 1
+            grouped_by_date[year].sub_values[month_name_key].sub_values[day_name_key].quantity += 1
+
+        filtered_by_date = self._filter_by_date_data(grouped_by_date)
+
+        return filtered_by_date
+
+    def month_name_key(self, month, year):
+        month_name = calendar.month_name[month]
+        month_name_key = f"{month_name}, {year}"
+        return month_name_key
+
+    def day_name_key(self, day, month, year):
+        month_name = calendar.month_name[month]
+        day_name_key = f"{month_name} {day}, {year}"
+        return day_name_key
+
+    def _filter_by_date_data(self, grouped_by_date):
+        # filter records display based on year and month
+
+        # no grouping display is done, all the original sorted values are returned
+        filtered_by_date = grouped_by_date
+
+        if self.active_year and self.active_year in grouped_by_date.keys() and self.active_month:
+            # grouping display is done by the year, then months and then days
+            active_month_key = self.month_name_key(self.active_month, self.active_year)
+            if active_month_key in grouped_by_date[self.active_year].sub_values.keys():
+                filtered_by_date = grouped_by_date[self.active_year].sub_values[active_month_key].sub_values
+        elif self.active_year and self.active_year in grouped_by_date.keys():
+            # grouping display is done by months of the active year and then days
+            filtered_by_date = grouped_by_date[self.active_year].sub_values
+        elif self.active_month and not self.active_year:
+            # grouping display is done by months of multiple years and then days
+            only_months_data = {}
+            for year, month_values in grouped_by_date.items():
+                for month, day_values in month_values.sub_values.items():
+                    active_month_key = self.month_name_key(self.active_month, year)
+                    if active_month_key == month:
+                        only_months_data[active_month_key] = day_values
+
+            filtered_by_date = only_months_data
+
+        return filtered_by_date
 
     def create_datasets_for_chartj(self, records):
         records_dict = OrderedDict({key: values.amount for key, values in records.items()})

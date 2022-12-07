@@ -148,7 +148,7 @@
                   {% include "statistics/records_tab_data.html" with chart_id="expenses-by-category-chart" chart_data=expenses_by_cat_datasets records=expenses_by_category %}
                 </div>
                 <div class="tab-pane" id="expenses-by-date-tab">
-                  By date
+                  {% include "statistics/records_tab_data.html" with chart_id="expenses-by-date-chart" chart_data=expenses_by_date_datasets records=expenses_by_date %}
                 </div>
               </div>
             </div>
@@ -182,7 +182,7 @@
                   {% include "statistics/records_tab_data.html" with chart_id="incomes-by-category-chart" chart_data=incomes_by_cat_datasets records=incomes_by_category %}
                 </div>
                 <div class="tab-pane" id="incomes-by-date-tab">
-                  By date
+                  {% include "statistics/records_tab_data.html" with chart_id="incomes-by-date-chart" chart_data=incomes_by_date_datasets records=incomes_by_date %}
                 </div>
               </div>
             </div>
