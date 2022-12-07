@@ -3,14 +3,14 @@ $(document).ready(function() {
     //- DOUGHNUT CHART EXPENSES AND INCOMES
     //-------------
 
-    var expensesCanvas = $('#doughnutChartExpenses')
+    var expensesCanvas = $('#expenses-by-category-chart')
     var expensesDataset = expensesCanvas.attr("data-datasets")
     var expensesData = {}
     if (expensesDataset) {
          expensesData = JSON.parse(expensesDataset)
     }
 
-    var incomesCanvas = $('#doughnutChartIncomes')
+    var incomesCanvas = $('#incomes-by-category-chart')
     var incomesDataset = incomesCanvas.attr("data-datasets")
     var incomesData = {}
     if (incomesDataset) {
@@ -18,7 +18,7 @@ $(document).ready(function() {
     }
 
     var donutOptions = {
-      maintainAspectRatio : false,
+      maintainAspectRatio : true,
       responsive : true,
       aspectRatio: 1,
       plugins: {

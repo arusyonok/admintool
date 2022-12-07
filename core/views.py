@@ -78,14 +78,14 @@ class StatisticsView(BasicViewOptions, views.TemplateView):
         records = self.get_records()
 
         expenses_by_category = self.grouped_by_category_for_table(records, RecordTypes.EXPENSE)
-        expenses_datasets = self.create_datasets_for_chartj(expenses_by_category)
-        context["expenses_by_category"] = self.grouped_by_category_for_table(records, RecordTypes.EXPENSE)
-        context["expenses_datasets"] = json.dumps(expenses_datasets)
+        expenses_by_cat_datasets = self.create_datasets_for_chartj(expenses_by_category)
+        context["expenses_by_category"] = expenses_by_category
+        context["expenses_by_cat_datasets"] = json.dumps(expenses_by_cat_datasets)
 
         incomes_by_category = self.grouped_by_category_for_table(records, RecordTypes.INCOME)
         incomes_datasets = self.create_datasets_for_chartj(incomes_by_category)
         context["incomes_by_category"] = incomes_by_category
-        context["incomes_datasets"] = json.dumps(incomes_datasets)
+        context["incomes_by_cat_datasets"] = json.dumps(incomes_datasets)
 
         return context
 

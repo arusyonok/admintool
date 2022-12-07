@@ -132,37 +132,23 @@
         {% else %}
           <div class="card card-danger card-tabs">
             <div class="card-header p-0 pt-1">
-              <ul class="nav nav-tabs" id="expenses-list-tab" role="tablist">
+              <ul class="nav nav-tabs ml-auto">
                 <li class="pt-2 px-3"><h3 class="card-title">Expenses</h3></li>
                 <li class="nav-item">
-                  <a class="nav-link active" id="expenses-by-category-tab" data-toggle="pill"
-                     href="#expenses-by-category" role="tab" aria-controls="expenses-by-category"
-                     aria-selected="true">By Category</a>
+                  <a class="nav-link active" href="#expenses-by-category-tab" data-toggle="tab">By Category</a>
                 </li>
                 <li class="nav-item">
-                  <a class="nav-link" id="expenses-by-date-tab" data-toggle="pill"
-                     href="#expenses-by-date" role="tab" aria-controls="expenses-by-date"
-                     aria-selected="true">By Date</a>
+                  <a class="nav-link" href="#expenses-by-date-tab" data-toggle="tab">By Date</a>
                 </li>
               </ul>
             </div>
             <div class="card-body">
-              <div class="tab-content" id="expenses-list-tabContent">
-                <div class="tab-pane fade show active" id="expenses-by-category" role="tabpanel" aria-labelledby="expenses-by-category-tab">
-                  <div class="row">
-                    <div class="col-md-4">
-                      <!-- DOUGHNUT CHART EXPENSES -->
-                      <div class="chart">
-                        <canvas id="doughnutChartExpenses" data-datasets="{{ expenses_datasets }}"></canvas>
-                      </div>
-                    </div>
-                    <div class="col-md-8">
-                      {% include "statistics/records_by_category_table.html" with records_by_category=expenses_by_category %}
-                    </div>
-                  </div>
+              <div class="tab-content p-0">
+                <div class="tab-pane active" id="expenses-by-category-tab">
+                  {% include "statistics/records_tab_data.html" with chart_id="expenses-by-category-chart" chart_data=expenses_by_cat_datasets records=expenses_by_category %}
                 </div>
-                <div class="tab-pane fade" id="expenses-by-date" role="tabpanel" aria-labelledby="expenses-by-date-tab">
-                  by date
+                <div class="tab-pane" id="expenses-by-date-tab">
+                  By date
                 </div>
               </div>
             </div>
@@ -180,37 +166,23 @@
         {% else %}
           <div class="card card-success card-tabs">
             <div class="card-header p-0 pt-1">
-              <ul class="nav nav-tabs" id="incomes-list-tab" role="tablist">
+              <ul class="nav nav-tabs ml-auto">
                 <li class="pt-2 px-3"><h3 class="card-title">Incomes</h3></li>
                 <li class="nav-item">
-                  <a class="nav-link active" id="incomes-by-category-tab" data-toggle="pill"
-                     href="#incomes-by-category" role="tab" aria-controls="incomes-by-category"
-                     aria-selected="true">By Category</a>
+                  <a class="nav-link active" href="#incomes-by-category-tab" data-toggle="tab">By Category</a>
                 </li>
                 <li class="nav-item">
-                  <a class="nav-link" id="incomes-by-date-tab" data-toggle="pill"
-                     href="#incomes-by-date" role="tab" aria-controls="incomes-by-date"
-                     aria-selected="true">By Date</a>
+                  <a class="nav-link" href="#incomes-by-date-tab" data-toggle="tab">By Date</a>
                 </li>
               </ul>
             </div>
             <div class="card-body">
-              <div class="tab-content" id="incomes-list-tabContent">
-                <div class="tab-pane fade show active" id="incomes-by-category" role="tabpanel" aria-labelledby="incomes-by-category-tab">
-                  <div class="row">
-                    <div class="col-md-4">
-                      <!-- DOUGHNUT CHART EXPENSES -->
-                      <div class="chart">
-                        <canvas id="doughnutChartIncomes" data-datasets="{{ incomes_datasets }}"></canvas>
-                      </div>
-                    </div>
-                    <div class="col-md-8">
-                      {% include "statistics/records_by_category_table.html" with records_by_category=incomes_by_category %}
-                    </div>
-                  </div>
+              <div class="tab-content p-0">
+                <div class="tab-pane active" id="incomes-by-category-tab">
+                  {% include "statistics/records_tab_data.html" with chart_id="incomes-by-category-chart" chart_data=incomes_by_cat_datasets records=incomes_by_category %}
                 </div>
-                <div class="tab-pane fade" id="incomes-by-date" role="tabpanel" aria-labelledby="incomes-by-date-tab">
-                  by date
+                <div class="tab-pane" id="incomes-by-date-tab">
+                  By date
                 </div>
               </div>
             </div>
