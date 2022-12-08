@@ -19,12 +19,13 @@ from core import views as core_views
 
 
 statistics_urls = [
-    url(r'^personal-wallet-(?P<personal_wallet_id>[0-9]+)/year-(?P<year>[0-9]{4})/month-(?P<month>[0-9]+)/$',
-        core_views.StatisticsView.as_view(), name="personal-wallet-year-month"),
-    url(r'^personal-wallet-(?P<personal_wallet_id>[0-9]+)/year-(?P<year>[0-9]{4})/$',
-        core_views.StatisticsView.as_view(), name="personal-wallet-year"),
-    url(r'^personal-wallet-(?P<personal_wallet_id>[0-9]+)/month-(?P<month>[0-9]+)/$',
-        core_views.StatisticsView.as_view(), name="personal-wallet-month"),
+    url(r'^year-(?P<year>[0-9]{4})/month-(?P<month>[0-9]+)/personal-wallet-(?P<personal_wallet_id>[0-9]+)/$',
+        core_views.StatisticsView.as_view(), name="year-month-personal-wallet"),
+    url(r'^year-(?P<year>[0-9]{4})/personal-wallet-(?P<personal_wallet_id>[0-9]+)/$',
+        core_views.StatisticsView.as_view(), name="year-personal-wallet"),
+    url(r'^month-(?P<month>[0-9]+)/personal-wallet-(?P<personal_wallet_id>[0-9]+)/$',
+        core_views.StatisticsView.as_view(), name="month-personal-wallet"),
+
     url(r'^year-(?P<year>[0-9]{4})/month-(?P<month>[0-9]+)/$',
         core_views.StatisticsView.as_view(), name="year-month"),
     url(r'^year-(?P<year>[0-9]{4})/$',

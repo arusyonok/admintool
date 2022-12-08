@@ -33,11 +33,11 @@
                 <li class="nav-item {% if active_personal_wallet and active_personal_wallet == wallet.id %}bg-warning{% endif %}">
                   <a href="
                   {% if active_year and active_month %}
-                  {% url 'statistics:personal-wallet-year-month' personal_wallet_id=wallet.id year=active_year month=active_month %}
+                  {% url 'statistics:year-month-personal-wallet' personal_wallet_id=wallet.id year=active_year month=active_month %}
                   {% elif active_year %}
-                  {% url 'statistics:personal-wallet-year' personal_wallet_id=wallet.id year=active_year %}
+                  {% url 'statistics:year-personal-wallet' personal_wallet_id=wallet.id year=active_year %}
                   {% elif active_month %}
-                  {% url 'statistics:personal-wallet-month' personal_wallet_id=wallet.id month=active_month %}
+                  {% url 'statistics:month-personal-wallet' personal_wallet_id=wallet.id month=active_month %}
                   {% else %}
                   {% url 'statistics:personal-wallet' personal_wallet_id=wallet.id %}
                   {% endif %}" class="nav-link">
@@ -90,9 +90,9 @@
                 <a type="button" class="btn {% if active_year and active_year == year %}btn-info disabled{% else %}btn-default{% endif %}"
                    href="
                   {% if active_personal_wallet and active_month %}
-                  {% url 'statistics:personal-wallet-year-month' personal_wallet_id=active_personal_wallet year=year month=active_month %}
+                  {% url 'statistics:year-month-personal-wallet' personal_wallet_id=active_personal_wallet year=year month=active_month %}
                   {% elif active_personal_wallet %}
-                  {% url 'statistics:personal-wallet-year' personal_wallet_id=active_personal_wallet year=year %}
+                  {% url 'statistics:year-personal-wallet' personal_wallet_id=active_personal_wallet year=year %}
                   {% elif active_month %}
                   {% url 'statistics:year-month' year=year month=active_month %}
                   {% else %}
@@ -107,9 +107,9 @@
                 <a type="button" class="btn {% if active_month and active_month == number %}btn-info disabled{% else %}btn-default{% endif %}"
                    href="
                   {% if active_personal_wallet and active_year %}
-                  {% url 'statistics:personal-wallet-year-month' personal_wallet_id=active_personal_wallet year=active_year month=number %}
+                  {% url 'statistics:year-month-personal-wallet' personal_wallet_id=active_personal_wallet year=active_year month=number %}
                   {% elif active_personal_wallet %}
-                  {% url 'statistics:personal-wallet-month' personal_wallet_id=active_personal_wallet month=number %}
+                  {% url 'statistics:month-personal-wallet' personal_wallet_id=active_personal_wallet month=number %}
                   {% elif active_year %}
                   {% url 'statistics:year-month' year=active_year month=number %}
                   {% else %}
