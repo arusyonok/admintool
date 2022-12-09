@@ -11,6 +11,13 @@ from finances.models import PersonalWalletRecord
 from dataclasses import dataclass
 
 
+class RecordsGroupingType:
+    BY_DATE = 0
+    BY_CATEGORY = 1
+
+    LIST = [BY_DATE, BY_CATEGORY]
+
+
 @dataclass
 class RecordsDisplayData:
     amount: int = 0
@@ -76,32 +83,52 @@ class StatisticsView(BasicViewOptions, views.TemplateView):
         context["active_month"] = self.active_month
         context["active_personal_wallet"] = self.active_personal_wallet
 
-        records = self.get_records()
+        expenses_by_category, expenses_by_cat_datasets = self.get_table_and_chart_js_data(
+            RecordTypes.EXPENSE, RecordsGroupingType.BY_CATEGORY
+        )
+        expenses_by_date, expenses_by_date_datasets = self.get_table_and_chart_js_data(
+            RecordTypes.EXPENSE, RecordsGroupingType.BY_DATE
+        )
 
-        expenses_by_category = self.grouped_by_category_for_table(records, RecordTypes.EXPENSE)
-        expenses_by_cat_datasets = self.create_datasets_for_chartj(expenses_by_category)
         context["expenses_by_category"] = expenses_by_category
         context["expenses_by_cat_datasets"] = json.dumps(expenses_by_cat_datasets)
-
-        expenses_by_date = self.grouped_by_date_for_table(records, RecordTypes.EXPENSE)
-        expenses_by_date_datasets = self.create_datasets_for_chartj(expenses_by_date)
         context["expenses_by_date"] = expenses_by_date
         context["expenses_by_date_datasets"] = json.dumps(expenses_by_date_datasets)
 
-        incomes_by_category = self.grouped_by_category_for_table(records, RecordTypes.INCOME)
-        incomes_datasets = self.create_datasets_for_chartj(incomes_by_category)
-        context["incomes_by_category"] = incomes_by_category
-        context["incomes_by_cat_datasets"] = json.dumps(incomes_datasets)
+        incomes_by_category, incomes_by_cat_datasets = self.get_table_and_chart_js_data(
+            RecordTypes.INCOME, RecordsGroupingType.BY_CATEGORY
+        )
+        incomes_by_date, incomes_by_date_datasets = self.get_table_and_chart_js_data(
+            RecordTypes.INCOME, RecordsGroupingType.BY_DATE
+        )
 
-        incomes_by_date = self.grouped_by_date_for_table(records, RecordTypes.INCOME)
-        incomes_by_date_datasets = self.create_datasets_for_chartj(incomes_by_date)
+        context["incomes_by_category"] = incomes_by_category
+        context["incomes_by_cat_datasets"] = json.dumps(incomes_by_cat_datasets)
         context["incomes_by_date"] = incomes_by_date
         context["incomes_by_date_datasets"] = json.dumps(incomes_by_date_datasets)
 
         return context
 
-    def get_records(self):
-        params = {"user_id": self.request.user.id}
+    def get_table_and_chart_js_data(self, record_type, grouped_by_type: int):
+        if grouped_by_type not in RecordsGroupingType.LIST:
+            raise ValueError("Unknown grouping type!")
+
+        table_data = {}
+        records = self.get_records(record_type)
+
+        if grouped_by_type == RecordsGroupingType.BY_CATEGORY:
+            table_data = self.grouped_by_category_for_table(records)
+
+        if grouped_by_type == RecordsGroupingType.BY_DATE:
+            records = records.order_by("date")
+            table_data = self.grouped_by_date_for_table(records)
+
+        chartjs_dataset = self.create_datasets_for_chartj(table_data)
+
+        return table_data, chartjs_dataset
+
+    def get_records(self, record_type):
+        params = {"record_type": record_type}
 
         if self.active_year:
             params["date__year"] = self.active_year
@@ -110,15 +137,15 @@ class StatisticsView(BasicViewOptions, views.TemplateView):
             params["date__month"] = self.active_month
 
         if self.active_personal_wallet:
+            params["user_id"] = self.request.user.id
             params["personal_wallet_id"] = self.active_personal_wallet
 
         records = PersonalWalletRecord.objects.filter(**params)
 
         return records
 
-    def grouped_by_category_for_table(self, records, record_type):
+    def grouped_by_category_for_table(self, records):
         by_category = OrderedDict()
-        records = records.filter(record_type=record_type)
 
         for rec in records:
             sub_category_name = rec.sub_category.name
@@ -146,9 +173,8 @@ class StatisticsView(BasicViewOptions, views.TemplateView):
 
         return by_category
 
-    def grouped_by_date_for_table(self, records, record_type):
+    def grouped_by_date_for_table(self, records):
         grouped_by_date = OrderedDict()
-        records = records.filter(record_type=record_type).order_by("date")
 
         for rec in records:
             year = rec.date.year
