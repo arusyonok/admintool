@@ -5,10 +5,11 @@ import calendar
 from django.urls import reverse
 from django.views import generic as views
 from django.contrib.auth.mixins import LoginRequiredMixin
+from django.db.models import F, Count
 from core.utils import get_category_tree
 from catalog.common import RecordTypes
 from collections import OrderedDict
-from finances.models import PersonalWalletRecord
+from finances.models import PersonalWalletRecord, GroupWalletRecord
 from dataclasses import dataclass
 
 
@@ -67,6 +68,7 @@ class StatisticsView(BasicViewOptions, views.TemplateView):
     active_month = None
     active_year = None
     active_personal_wallet = None
+    active_group_wallet = None
 
     def get_context_data(self, *args, **kwargs):
         context = super().get_context_data(**kwargs)
@@ -76,6 +78,7 @@ class StatisticsView(BasicViewOptions, views.TemplateView):
         context["active_year"] = self.active_year
         context["active_month"] = self.active_month
         context["active_personal_wallet"] = self.active_personal_wallet
+        context["active_group_wallet"] = self.active_group_wallet
 
         context["months"] = self.get_months()
         context["years"] = self.get_years()
@@ -116,6 +119,7 @@ class StatisticsView(BasicViewOptions, views.TemplateView):
         self.active_year = int(kwargs_dict["year"]) if kwargs_dict.get("year") else None
         self.active_month = int(kwargs_dict["month"]) if kwargs_dict.get("month") else None
         self.active_personal_wallet = int(kwargs_dict["personal_wallet_id"]) if kwargs_dict.get("personal_wallet_id") else None
+        self.active_group_wallet = int(kwargs_dict["group_wallet_id"]) if kwargs_dict.get("group_wallet_id") else None
 
     def get_wallet_data(self):
         all_wallets = self.request.user.wallet_set.all()
@@ -123,15 +127,16 @@ class StatisticsView(BasicViewOptions, views.TemplateView):
         group_wallets = []
 
         for wallet in all_wallets:
-            wallet.filter_url = ""
             url_args = self.kwargs.copy()
             if wallet.is_personal_wallet:
                 url_args["personal_wallet_id"] = wallet.id
                 personal_wallets.append(wallet)
-                wallet.filter_url = reverse("statistics:filter", kwargs=url_args)
 
             if wallet.is_group_wallet:
+                url_args["group_wallet_id"] = wallet.id
                 group_wallets.append(wallet)
+
+            wallet.filter_url = reverse("statistics:filter", kwargs=url_args)
 
         return personal_wallets, group_wallets
 
@@ -176,7 +181,9 @@ class StatisticsView(BasicViewOptions, views.TemplateView):
         return table_data, chartjs_dataset
 
     def get_records(self, record_type):
+        list_of_columns = ["title", "date", "sub_category", "sub_category__parent", "record_type"]
         params = {"record_type": record_type}
+        user_id = self.request.user.id
 
         if self.active_year:
             params["date__year"] = self.active_year
@@ -184,11 +191,27 @@ class StatisticsView(BasicViewOptions, views.TemplateView):
         if self.active_month:
             params["date__month"] = self.active_month
 
-        if self.active_personal_wallet:
-            params["user_id"] = self.request.user.id
-            params["personal_wallet_id"] = self.active_personal_wallet
+        personal_params = {"user_id": user_id, **params}
+        personal_records = PersonalWalletRecord.objects.filter(**personal_params).only(*list_of_columns).annotate(
+            amount_value=F("amount")
+        )
 
-        records = PersonalWalletRecord.objects.filter(**params)
+        group_records = GroupWalletRecord.objects.filter(**params).only(*list_of_columns).annotate(
+            amount_value=F("amount") / Count('paid_for_users')
+        ).filter(paid_for_users__id=user_id)
+
+        if self.active_personal_wallet:
+            personal_records = personal_records.filter(personal_wallet_id=self.active_personal_wallet)
+
+        if self.active_group_wallet:
+            group_records = group_records.filter(group_wallet_id=self.active_group_wallet)
+
+        if self.active_personal_wallet and not self.active_group_wallet:
+            records = personal_records
+        elif self.active_group_wallet and not self.active_personal_wallet:
+            records = group_records
+        else:
+            records = personal_records.union(group_records, all=True)
 
         return records
 
@@ -209,10 +232,10 @@ class StatisticsView(BasicViewOptions, views.TemplateView):
             by_category[category_name].sub_values[sub_category_name].values.append(rec)
 
             # calculate the amounts
-            sub_category_amount = by_category[category_name].sub_values[sub_category_name].amount + int(rec.amount)
+            sub_category_amount = by_category[category_name].sub_values[sub_category_name].amount + int(rec.amount_value)
             by_category[category_name].sub_values[sub_category_name].amount = sub_category_amount
 
-            category_amount = by_category[category_name].amount + int(rec.amount)
+            category_amount = by_category[category_name].amount + int(rec.amount_value)
             by_category[category_name].amount = category_amount
 
             # calculate quantities
@@ -246,13 +269,13 @@ class StatisticsView(BasicViewOptions, views.TemplateView):
             grouped_by_date[year].sub_values[month_name_key].sub_values[day_name_key].values.append(rec)
 
             # calculate the amounts
-            day_amount = grouped_by_date[year].sub_values[month_name_key].sub_values[day_name_key].amount + int(rec.amount)
+            day_amount = grouped_by_date[year].sub_values[month_name_key].sub_values[day_name_key].amount + int(rec.amount_value)
             grouped_by_date[year].sub_values[month_name_key].sub_values[day_name_key].amount = day_amount
 
-            month_amount = grouped_by_date[year].sub_values[month_name_key].amount + int(rec.amount)
+            month_amount = grouped_by_date[year].sub_values[month_name_key].amount + int(rec.amount_value)
             grouped_by_date[year].sub_values[month_name_key].amount = month_amount
 
-            year_amount = grouped_by_date[year].amount + int(rec.amount)
+            year_amount = grouped_by_date[year].amount + int(rec.amount_value)
             grouped_by_date[year].amount = year_amount
 
             # calculate quantities

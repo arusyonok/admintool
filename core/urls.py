@@ -21,8 +21,9 @@ from core import views as core_views
 year_regex = "(?:year/(?P<year>[0-9]{4})/)?"
 month_regex = "(?:month/(?P<month>[1-9]|1[0-2])/)?"
 personal_wallet_regex = "(?:personal-wallet/(?P<personal_wallet_id>[0-9]+)/)?"
+group_wallet_regex = "(?:group-wallet/(?P<group_wallet_id>[0-9]+)/)?"
 
-filtering_url_arguments = f"{year_regex}{month_regex}{personal_wallet_regex}"
+filtering_url_arguments = f"{year_regex}{month_regex}{personal_wallet_regex}{group_wallet_regex}"
 
 statistics_urls = [
     url(r'^filter/' + filtering_url_arguments, core_views.StatisticsView.as_view(), name="filter"),

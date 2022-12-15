@@ -15,7 +15,7 @@
             {% for record in vals.values %}
               <tr>
                 <td>{{ record.title }}</td>
-                <td>{{ record.amount }}</td>
+                <td>{{ record.amount_value|floatformat:2 }}</td>
                 <td>
                   <a class="btn btn-info btn-sm"
                      href="#">

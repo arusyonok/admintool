@@ -12,7 +12,7 @@
         <div class="col-md-3">
           <div class="card card-outline card-warning">
             <div class="card-header">
-              <h3 class="card-title">Filter Personal Wallet Records</h3>
+              <h3 class="card-title">Personal Wallet Records</h3>
               <div class="card-tools">
                 <a class="text-warning"
                     href="
@@ -44,13 +44,13 @@
         <div class="col-md-3">
           <div class="card card-outline card-success">
             <div class="card-header">
-              <h3 class="card-title">Include Group Wallet Records</h3>
+              <h3 class="card-title">Group Wallet Records</h3>
             </div>
             <div class="card-body p-0">
               <ul class="nav nav-pills flex-column">
                 {% for wallet in group_wallets %}
-                <li class="nav-item">
-                  <a href="#" class="nav-link">
+                <li class="nav-item {% if active_group_wallet and active_group_wallet == wallet.id %}bg-success{% endif %}">
+                  <a href="{{ wallet.filter_url }}" class="nav-link">
                     <i class="fas fa-wallet text-success"></i> {{ wallet.title }}
                   </a>
                 </li>
