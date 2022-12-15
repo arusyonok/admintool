@@ -18,22 +18,14 @@ from django.contrib import admin
 from core import views as core_views
 
 
-statistics_urls = [
-    url(r'^year-(?P<year>[0-9]{4})/month-(?P<month>[0-9]+)/personal-wallet-(?P<personal_wallet_id>[0-9]+)/$',
-        core_views.StatisticsView.as_view(), name="year-month-personal-wallet"),
-    url(r'^year-(?P<year>[0-9]{4})/personal-wallet-(?P<personal_wallet_id>[0-9]+)/$',
-        core_views.StatisticsView.as_view(), name="year-personal-wallet"),
-    url(r'^month-(?P<month>[0-9]+)/personal-wallet-(?P<personal_wallet_id>[0-9]+)/$',
-        core_views.StatisticsView.as_view(), name="month-personal-wallet"),
+year_regex = "(?:year/(?P<year>[0-9]{4})/)?"
+month_regex = "(?:month/(?P<month>[1-9]|1[0-2])/)?"
+personal_wallet_regex = "(?:personal-wallet/(?P<personal_wallet_id>[0-9]+)/)?"
 
-    url(r'^year-(?P<year>[0-9]{4})/month-(?P<month>[0-9]+)/$',
-        core_views.StatisticsView.as_view(), name="year-month"),
-    url(r'^year-(?P<year>[0-9]{4})/$',
-        core_views.StatisticsView.as_view(), name="year"),
-    url(r'^month-(?P<month>[0-9]+)/$',
-        core_views.StatisticsView.as_view(), name="month"),
-    url(r'^personal-wallet-(?P<personal_wallet_id>[0-9]+)/$',
-        core_views.StatisticsView.as_view(), name="personal-wallet"),
+filtering_url_arguments = f"{year_regex}{month_regex}{personal_wallet_regex}"
+
+statistics_urls = [
+    url(r'^filter/' + filtering_url_arguments, core_views.StatisticsView.as_view(), name="filter"),
     url(r'^$', core_views.StatisticsView.as_view(), name='view'),
 ]
 

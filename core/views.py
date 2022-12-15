@@ -2,9 +2,10 @@ import json
 import typing
 import calendar
 
+from django.urls import reverse
 from django.views import generic as views
 from django.contrib.auth.mixins import LoginRequiredMixin
-from core.utils import get_category_tree, get_months
+from core.utils import get_category_tree
 from catalog.common import RecordTypes
 from collections import OrderedDict
 from finances.models import PersonalWalletRecord
@@ -70,18 +71,18 @@ class StatisticsView(BasicViewOptions, views.TemplateView):
     def get_context_data(self, *args, **kwargs):
         context = super().get_context_data(**kwargs)
 
-        context["months"] = get_months()
-        context["years"] = [2021, 2022]
-        context["personal_wallets"] = self.request.user.personal_wallets
-        context["group_wallets"] = self.request.user.group_wallets
-
-        self.active_year = int(self.kwargs.get("year")) if self.kwargs.get("year") else None
-        self.active_month = int(self.kwargs.get("month")) if self.kwargs.get("month") else None
-        self.active_personal_wallet = int(self.kwargs.get("personal_wallet_id")) if self.kwargs.get("personal_wallet_id") else None
+        self.assign_url_parameters_for_filtering()
 
         context["active_year"] = self.active_year
         context["active_month"] = self.active_month
         context["active_personal_wallet"] = self.active_personal_wallet
+
+        context["months"] = self.get_months()
+        context["years"] = self.get_years()
+
+        personal_wallets, group_wallets = self.get_wallet_data()
+        context["personal_wallets"] = personal_wallets
+        context["group_wallets"] = group_wallets
 
         expenses_by_category, expenses_by_cat_datasets = self.get_table_and_chart_js_data(
             RecordTypes.EXPENSE, RecordsGroupingType.BY_CATEGORY
@@ -108,6 +109,53 @@ class StatisticsView(BasicViewOptions, views.TemplateView):
         context["incomes_by_date_datasets"] = json.dumps(incomes_by_date_datasets)
 
         return context
+
+    def assign_url_parameters_for_filtering(self):
+        kwargs_dict = self.kwargs.copy()
+
+        self.active_year = int(kwargs_dict["year"]) if kwargs_dict.get("year") else None
+        self.active_month = int(kwargs_dict["month"]) if kwargs_dict.get("month") else None
+        self.active_personal_wallet = int(kwargs_dict["personal_wallet_id"]) if kwargs_dict.get("personal_wallet_id") else None
+
+    def get_wallet_data(self):
+        all_wallets = self.request.user.wallet_set.all()
+        personal_wallets = []
+        group_wallets = []
+
+        for wallet in all_wallets:
+            wallet.filter_url = ""
+            url_args = self.kwargs.copy()
+            if wallet.is_personal_wallet:
+                url_args["personal_wallet_id"] = wallet.id
+                personal_wallets.append(wallet)
+                wallet.filter_url = reverse("statistics:filter", kwargs=url_args)
+
+            if wallet.is_group_wallet:
+                group_wallets.append(wallet)
+
+        return personal_wallets, group_wallets
+
+    def get_months(self):
+        months = {}
+        for i in range(1, 13):
+            url_args = self.kwargs.copy()
+            url_args["month"] = i
+
+            months[i] = {}
+            months[i]["name"] = calendar.month_abbr[i]
+            months[i]["filter_url"] = reverse("statistics:filter", kwargs=url_args)
+
+        return months
+
+    def get_years(self):
+        years = {}
+
+        for i in range(2021, 2023):
+            url_args = self.kwargs.copy()
+            url_args["year"] = i
+            years[i] = reverse("statistics:filter", kwargs=url_args)
+
+        return years
 
     def get_table_and_chart_js_data(self, record_type, grouped_by_type: int):
         if grouped_by_type not in RecordsGroupingType.LIST:

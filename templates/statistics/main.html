@@ -17,11 +17,11 @@
                 <a class="text-warning"
                     href="
                     {% if active_year and active_month %}
-                    {% url 'statistics:year-month' year=active_year month=active_month %}
+                    {% url 'statistics:filter' year=active_year month=active_month %}
                     {% elif active_year %}
-                    {% url 'statistics:year' year=active_year %}
+                    {% url 'statistics:filter' year=active_year %}
                     {% elif active_month %}
-                    {% url 'statistics:month' month=active_month %}
+                    {% url 'statistics:filter' month=active_month %}
                     {% else %}
                     {% url 'statistics:view' %}
                     {% endif %}"><i class="fas fa-broom"></i> Reset</a>
@@ -31,16 +31,7 @@
               <ul class="nav nav-pills flex-column">
                 {% for wallet in personal_wallets %}
                 <li class="nav-item {% if active_personal_wallet and active_personal_wallet == wallet.id %}bg-warning{% endif %}">
-                  <a href="
-                  {% if active_year and active_month %}
-                  {% url 'statistics:year-month-personal-wallet' personal_wallet_id=wallet.id year=active_year month=active_month %}
-                  {% elif active_year %}
-                  {% url 'statistics:year-personal-wallet' personal_wallet_id=wallet.id year=active_year %}
-                  {% elif active_month %}
-                  {% url 'statistics:month-personal-wallet' personal_wallet_id=wallet.id month=active_month %}
-                  {% else %}
-                  {% url 'statistics:personal-wallet' personal_wallet_id=wallet.id %}
-                  {% endif %}" class="nav-link">
+                  <a href="{{ wallet.filter_url }}" class="nav-link">
                     <i class="fas fa-coins text-warning"></i> {{ wallet.title }}
                   </a>
                 </li>
@@ -77,7 +68,7 @@
                 <a class="text-info"
                     href="
                     {% if active_personal_wallet %}
-                    {% url 'statistics:personal-wallet' personal_wallet_id=active_personal_wallet %}
+                    {% url 'statistics:filter' personal_wallet_id=active_personal_wallet %}
                     {% else %}
                     {% url 'statistics:view' %}
                     {% endif %}"><i class="fas fa-broom"></i> Reset</a>
@@ -86,36 +77,16 @@
             <div class="card-body">
               <div class="form-group">
                 <label for="year">Year:</label>
-                {% for year in years %}
+                {% for year, filter_url in years.items %}
                 <a type="button" class="btn {% if active_year and active_year == year %}btn-info disabled{% else %}btn-default{% endif %}"
-                   href="
-                  {% if active_personal_wallet and active_month %}
-                  {% url 'statistics:year-month-personal-wallet' personal_wallet_id=active_personal_wallet year=year month=active_month %}
-                  {% elif active_personal_wallet %}
-                  {% url 'statistics:year-personal-wallet' personal_wallet_id=active_personal_wallet year=year %}
-                  {% elif active_month %}
-                  {% url 'statistics:year-month' year=year month=active_month %}
-                  {% else %}
-                  {% url 'statistics:year' year=year %}
-                  {% endif %}"
-                   id="year">{{ year }}</a>
+                   href="{{ filter_url }}" id="year">{{ year }}</a>
                 {% endfor %}
               </div>
               <div class="form-group">
                 <label>Month:</label>
-                {% for number, name in months.items %}
+                {% for number, values in months.items %}
                 <a type="button" class="btn {% if active_month and active_month == number %}btn-info disabled{% else %}btn-default{% endif %}"
-                   href="
-                  {% if active_personal_wallet and active_year %}
-                  {% url 'statistics:year-month-personal-wallet' personal_wallet_id=active_personal_wallet year=active_year month=number %}
-                  {% elif active_personal_wallet %}
-                  {% url 'statistics:month-personal-wallet' personal_wallet_id=active_personal_wallet month=number %}
-                  {% elif active_year %}
-                  {% url 'statistics:year-month' year=active_year month=number %}
-                  {% else %}
-                  {% url 'statistics:month' month=number %}
-                  {% endif %}"
-                   id="month">{{ name }}</a>
+                   href="{{ values.filter_url }}" id="month">{{ values.name }}</a>
                 {% endfor %}
               </div>
             </div>
