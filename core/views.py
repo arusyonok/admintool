@@ -87,6 +87,11 @@ class StatisticsView(BasicViewOptions, views.TemplateView):
         context["personal_wallets"] = personal_wallets
         context["group_wallets"] = group_wallets
 
+        personal_wallet_reset_url, group_wallet_reset_url, dates_reset_url = self.get_reset_urls()
+        context["personal_wallet_reset_url"] = personal_wallet_reset_url
+        context["group_wallet_reset_url"] = group_wallet_reset_url
+        context["dates_reset_url"] = dates_reset_url
+
         expenses_by_category, expenses_by_cat_datasets = self.get_table_and_chart_js_data(
             RecordTypes.EXPENSE, RecordsGroupingType.BY_CATEGORY
         )
@@ -161,6 +166,20 @@ class StatisticsView(BasicViewOptions, views.TemplateView):
             years[i] = reverse("statistics:filter", kwargs=url_args)
 
         return years
+
+    def get_reset_urls(self):
+        current_args = self.kwargs.copy()
+
+        pw_reset_url_args = {key: current_args[key] for key in current_args if key != "personal_wallet_id"}
+        personal_wallet_reset_url = reverse("statistics:filter", kwargs=pw_reset_url_args)
+
+        gw_reset_url_args = {key: current_args[key] for key in current_args if key != "group_wallet_id"}
+        group_wallet_reset_url = reverse("statistics:filter", kwargs=gw_reset_url_args)
+
+        dates_reset_url_args = {key: current_args[key] for key in current_args if key not in ["year", "month"]}
+        dates_reset_url = reverse("statistics:filter", kwargs=dates_reset_url_args)
+
+        return personal_wallet_reset_url, group_wallet_reset_url, dates_reset_url
 
     def get_table_and_chart_js_data(self, record_type, grouped_by_type: int):
         if grouped_by_type not in RecordsGroupingType.LIST:

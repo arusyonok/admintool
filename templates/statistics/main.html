@@ -14,17 +14,7 @@
             <div class="card-header">
               <h3 class="card-title">Personal Wallet Records</h3>
               <div class="card-tools">
-                <a class="text-warning"
-                    href="
-                    {% if active_year and active_month %}
-                    {% url 'statistics:filter' year=active_year month=active_month %}
-                    {% elif active_year %}
-                    {% url 'statistics:filter' year=active_year %}
-                    {% elif active_month %}
-                    {% url 'statistics:filter' month=active_month %}
-                    {% else %}
-                    {% url 'statistics:view' %}
-                    {% endif %}"><i class="fas fa-broom"></i> Reset</a>
+                <a class="text-warning" href="{{ personal_wallet_reset_url }}"><i class="fas fa-broom"></i> Reset</a>
               </div>
             </div>
             <div class="card-body p-0">
@@ -45,6 +35,9 @@
           <div class="card card-outline card-success">
             <div class="card-header">
               <h3 class="card-title">Group Wallet Records</h3>
+              <div class="card-tools">
+                <a class="text-success" href="{{ group_wallet_reset_url }}"><i class="fas fa-broom"></i> Reset</a>
+              </div>
             </div>
             <div class="card-body p-0">
               <ul class="nav nav-pills flex-column">
@@ -65,13 +58,7 @@
             <div class="card-header">
               <h3 class="card-title">Dates</h3>
               <div class="card-tools">
-                <a class="text-info"
-                    href="
-                    {% if active_personal_wallet %}
-                    {% url 'statistics:filter' personal_wallet_id=active_personal_wallet %}
-                    {% else %}
-                    {% url 'statistics:view' %}
-                    {% endif %}"><i class="fas fa-broom"></i> Reset</a>
+                <a class="text-info" href="{{ dates_reset_url }}"><i class="fas fa-broom"></i> Reset</a>
               </div>
             </div>
             <div class="card-body">
