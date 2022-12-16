@@ -30,8 +30,6 @@
             </div>
             <!-- /.card-body -->
           </div>
-        </div>
-        <div class="col-md-3">
           <div class="card card-outline card-success">
             <div class="card-header">
               <h3 class="card-title">Group Wallet Records</h3>
@@ -52,8 +50,6 @@
             </div>
             <!-- /.card-body -->
           </div>
-        </div>
-        <div class="col-md-6">
           <div class="card card-outline card-info">
             <div class="card-header">
               <h3 class="card-title">Dates</h3>
@@ -78,10 +74,8 @@
               </div>
             </div>
           </div>
-       </div>
-      </div>
-      <div class="row">
-        <div class="col-md-12">
+        </div>
+        <div class="col-md-9">
         {% if expenses_by_category|length == 0 %}
           <div class="callout callout-danger">
             <h5>No expenses data available</h5>
@@ -112,10 +106,6 @@
             </div>
           </div>
         {% endif %}
-        </div>
-      </div>
-      <div class="row">
-        <div class="col-md-12">
         {% if incomes_by_category|length == 0 %}
           <div class="callout callout-success">
             <h5>No incomes data available</h5>

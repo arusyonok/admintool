@@ -13,7 +13,7 @@ $(document).ready(function() {
         }
       },
       legend: {
-        position: 'left',
+        position: 'top',
         padding: 2,
         labels: {
           pointStyle: 'circle',
