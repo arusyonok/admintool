@@ -1,4 +1,5 @@
 {% extends "layouts/index.html" %}
+{% load custom_tags %}
 
 {% block content %}
 
@@ -43,7 +44,7 @@
                   {% for expense in records %}
                   <tr>
                     <td>{{ expense.title }}</td>
-                    <td>{{ expense.amount }}</td>
+                    <td>{{ expense.amount|currency }}</td>
                     <td>{{ expense.date }}</td>
                     <td>{{ expense.sub_category.parent }}</td>
                     <td>{{ expense.sub_category }}</td>

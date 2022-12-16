@@ -1,9 +1,10 @@
+{% load custom_tags %}
   <tr data-widget="expandable-table" aria-expanded="false">
     <td>
       <i class="expandable-table-caret fas fa-caret-right fa-fw"></i>
       {{ key }}
     </td>
-    <td>{{ vals.amount }}</td>
+    <td>{{ vals.amount|currency }}</td>
     <td>{{ vals.quantity }} pcs</td>
   </tr>
   <tr class="expandable-body">
@@ -15,7 +16,7 @@
             {% for record in vals.values %}
               <tr>
                 <td>{{ record.title }}</td>
-                <td>{{ record.amount_value|floatformat:2 }}</td>
+                <td>{{ record.amount_value|floatformat:2|currency }}</td>
                 <td>
                   <a class="btn btn-info btn-sm"
                      href="#">
