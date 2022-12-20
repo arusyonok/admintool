@@ -3,7 +3,7 @@ import datetime
 from django.db import models
 from accounts.models import Profile, Wallet
 from catalog.common import RecordTypes
-from catalog.models import SubCategory
+from catalog.models import SubCategory, Tag
 from decimal import Decimal
 
 
@@ -13,6 +13,7 @@ class AbstractRecord(models.Model):
     date = models.DateField(default=datetime.date.today)
     sub_category = models.ForeignKey(SubCategory, on_delete=models.SET_NULL, null=True)
     record_type = models.IntegerField(choices=RecordTypes.CHOICES)
+    tags = models.ManyToManyField(Tag)
 
     created_at = models.DateTimeField(auto_now_add=True)
     updated_at = models.DateTimeField(auto_now=True)

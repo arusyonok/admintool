@@ -1,5 +1,4 @@
 from django.db import models
-from django.contrib import admin
 from catalog.common import RecordTypes
 
 
@@ -20,6 +19,13 @@ class SubCategory(models.Model):
 
     class Meta:
         verbose_name = "Sub Categories"
+
+    def __str__(self):
+        return self.name
+
+
+class Tag(models.Model):
+    name = models.CharField(max_length=50)
 
     def __str__(self):
         return self.name
