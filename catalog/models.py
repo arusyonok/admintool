@@ -24,6 +24,11 @@ class SubCategory(models.Model):
         return self.name
 
 
+class SubCategoryKeywords(models.Model):
+    keyword = models.CharField(max_length=100)
+    sub_category = models.ForeignKey(SubCategory, on_delete=models.CASCADE)
+
+
 class Tag(models.Model):
     name = models.CharField(max_length=50)
 
