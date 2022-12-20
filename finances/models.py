@@ -1,3 +1,5 @@
+import datetime
+
 from django.db import models
 from accounts.models import Profile, Wallet
 from catalog.common import RecordTypes
@@ -8,7 +10,7 @@ from decimal import Decimal
 class AbstractRecord(models.Model):
     title = models.CharField(max_length=50)
     amount = models.DecimalField(decimal_places=2, max_digits=10)
-    date = models.DateTimeField(auto_now_add=True)
+    date = models.DateField(default=datetime.date.today)
     sub_category = models.ForeignKey(SubCategory, on_delete=models.SET_NULL, null=True)
     record_type = models.IntegerField(choices=RecordTypes.CHOICES)
 

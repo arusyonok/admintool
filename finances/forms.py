@@ -1,3 +1,4 @@
+import datetime
 from django import forms
 from accounts.models import Profile
 from catalog.models import SubCategory
@@ -6,11 +7,18 @@ from .models import PersonalWalletRecord, GroupWalletRecord
 
 
 class PersonalRecordCreateForm(forms.ModelForm):
+    date = forms.DateField(input_formats=['%d/%m/%Y'])
     record_type = forms.CharField(widget=forms.HiddenInput(), required=False)
 
     class Meta:
         model = PersonalWalletRecord
-        fields = ["title", "amount", "record_type", "sub_category"]
+        fields = ["title", "amount", "date", "record_type", "sub_category"]
+
+    def clean_date(self):
+        date = self.cleaned_data['date']
+        if date > datetime.date.today():
+            raise forms.ValidationError("The date cannot be in the future!")
+        return date
 
 
 class ExpenseCreateForm(PersonalRecordCreateForm):
@@ -30,11 +38,18 @@ class IncomeCreateForm(PersonalRecordCreateForm):
 
 
 class PersonalRecordUpdateForm(forms.ModelForm):
+    date = forms.DateField(input_formats=['%d/%m/%Y'])
     record_type = forms.CharField(widget=forms.HiddenInput(), required=False)
 
     class Meta:
         model = PersonalWalletRecord
-        fields = ["title", "amount", "record_type", "sub_category"]
+        fields = ["title", "amount", "date", "record_type", "sub_category"]
+
+    def clean_date(self):
+        date = self.cleaned_data['date']
+        if date > datetime.date.today():
+            raise forms.ValidationError("The date cannot be in the future!")
+        return date
 
 
 class ExpenseUpdateForm(PersonalRecordUpdateForm):
@@ -54,6 +69,7 @@ class IncomeUpdateForm(PersonalRecordUpdateForm):
 
 
 class GroupExpenseCreateForm(forms.ModelForm):
+    date = forms.DateField(input_formats=['%d/%m/%Y'])
     record_type = forms.CharField(widget=forms.HiddenInput(), required=False)
     sub_category = forms.ModelChoiceField(queryset=SubCategory.objects.filter(parent__type=RecordTypes.EXPENSE),
                                           required=False)
@@ -62,7 +78,7 @@ class GroupExpenseCreateForm(forms.ModelForm):
 
     class Meta:
         model = GroupWalletRecord
-        fields = ["title", "amount", "paid_by", "paid_for_users", "record_type", "sub_category"]
+        fields = ["title", "amount", "date", "paid_by", "paid_for_users", "record_type", "sub_category"]
 
     def __init__(self, wallet_id=None, *args, **kwargs):
         super(GroupExpenseCreateForm, self).__init__(*args, **kwargs)
@@ -76,8 +92,15 @@ class GroupExpenseCreateForm(forms.ModelForm):
     def clean_record_type(self):
         return RecordTypes.EXPENSE
 
+    def clean_date(self):
+        date = self.cleaned_data['date']
+        if date > datetime.date.today():
+            raise forms.ValidationError("The date cannot be in the future!")
+        return date
+
 
 class GroupExpenseUpdateForm(forms.ModelForm):
+    date = forms.DateField(input_formats=['%d/%m/%Y'])
     record_type = forms.CharField(widget=forms.HiddenInput(), required=False)
     sub_category = forms.ModelChoiceField(queryset=SubCategory.objects.filter(parent__type=RecordTypes.EXPENSE),
                                           required=False)
@@ -86,7 +109,7 @@ class GroupExpenseUpdateForm(forms.ModelForm):
 
     class Meta:
         model = GroupWalletRecord
-        fields = ["title", "amount", "paid_by", "paid_for_users", "record_type", "sub_category"]
+        fields = ["title", "amount", "date", "paid_by", "paid_for_users", "record_type", "sub_category"]
 
     def __init__(self, wallet_id=None, *args, **kwargs):
         super(GroupExpenseUpdateForm, self).__init__(*args, **kwargs)
@@ -99,3 +122,9 @@ class GroupExpenseUpdateForm(forms.ModelForm):
 
     def clean_record_type(self):
         return RecordTypes.EXPENSE
+
+    def clean_date(self):
+        date = self.cleaned_data['date']
+        if date > datetime.date.today():
+            raise forms.ValidationError("The date cannot be in the future!")
+        return date

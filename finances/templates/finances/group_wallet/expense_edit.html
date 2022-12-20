@@ -31,6 +31,15 @@
                            name="{{ form.amount.name }}" placeholder="Price"  value="{{ form.amount.value }}">
                   </div>
                   <div class="form-group">
+                    <label>Date:</label>
+                    <div class="input-group date" id="id_date" data-target-input="nearest" >
+                      <input type="text" data-toggle="datetimepicker" class="form-control datetimepicker-input" data-target="#id_date" name="{{ form.date.name }}">
+                      <div class="input-group-append" data-target="#id_date" data-toggle="datetimepicker">
+                          <div class="input-group-text"><i class="fa fa-calendar"></i></div>
+                      </div>
+                    </div>
+                  </div>
+                  <div class="form-group">
                     <label for="category_select">Category</label>
                     <select class="custom-select form-control" id="category_select">
                       <option selected>---------</option>
@@ -94,4 +103,13 @@
     </section>
     <!-- /.content -->
 
+{% endblock %}
+
+{% block javascript %}
+<script>
+    //Date picker
+    $('#id_date').datetimepicker({
+        format: 'D/M/YYYY',
+    });
+</script>
 {% endblock %}
