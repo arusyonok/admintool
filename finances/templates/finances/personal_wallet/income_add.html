@@ -1,4 +1,5 @@
 {% extends "layouts/index.html" %}
+{% load static from static %}
 
 {% block content %}
 
@@ -55,6 +56,17 @@
                       {% endfor %}
                     </select>
                   </div>
+                  <div class="form-group">
+                    <label>Tags</label>
+                    <div class="select2-olive">
+                      <select class="select2" multiple="multiple" data-placeholder="Select a State" style="width: 100%;"
+                              data-dropdown-css-class="select2-olive" name="{{ form.tags.name }}">
+                      {% for tag in form.tags.field.queryset %}
+                        <option value="{{ tag.id }}">{{ tag.name }}</option>
+                      {% endfor %}
+                      </select>
+                    </div>
+                  </div>
                 </div>
                 <!-- /.card-body -->
                 <div class="card-footer">
@@ -78,7 +90,12 @@
 {% endblock %}
 
 {% block javascript %}
+<!-- Select2 -->
+<script src="{% static 'plugins/select2/js/select2.full.min.js' %}"></script>
 <script>
+    //Initialize Select2 Elements
+    $('.select2').select2()
+
     //Date picker
     $('#id_date').datetimepicker({
         format: 'D/M/YYYY',

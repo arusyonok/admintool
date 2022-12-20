@@ -1,7 +1,7 @@
 import datetime
 from django import forms
 from accounts.models import Profile
-from catalog.models import SubCategory
+from catalog.models import SubCategory, Tag
 from catalog.common import RecordTypes
 from .models import PersonalWalletRecord, GroupWalletRecord
 
@@ -9,10 +9,11 @@ from .models import PersonalWalletRecord, GroupWalletRecord
 class PersonalRecordCreateForm(forms.ModelForm):
     date = forms.DateField(input_formats=['%d/%m/%Y'])
     record_type = forms.CharField(widget=forms.HiddenInput(), required=False)
+    tags = forms.ModelMultipleChoiceField(queryset=Tag.objects.all(), required=False)
 
     class Meta:
         model = PersonalWalletRecord
-        fields = ["title", "amount", "date", "record_type", "sub_category"]
+        fields = ["title", "amount", "date", "record_type", "sub_category", "tags"]
 
     def clean_date(self):
         date = self.cleaned_data['date']
@@ -40,10 +41,11 @@ class IncomeCreateForm(PersonalRecordCreateForm):
 class PersonalRecordUpdateForm(forms.ModelForm):
     date = forms.DateField(input_formats=['%d/%m/%Y'])
     record_type = forms.CharField(widget=forms.HiddenInput(), required=False)
+    tags = forms.ModelMultipleChoiceField(queryset=Tag.objects.all(), required=False)
 
     class Meta:
         model = PersonalWalletRecord
-        fields = ["title", "amount", "date", "record_type", "sub_category"]
+        fields = ["title", "amount", "date", "record_type", "sub_category", "tags"]
 
     def clean_date(self):
         date = self.cleaned_data['date']
