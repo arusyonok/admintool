@@ -6,7 +6,7 @@ from django.urls import reverse
 from django.views import generic as views
 from django.contrib.auth.mixins import LoginRequiredMixin
 from django.db.models import F, Count
-from core.utils import get_category_tree
+from core import utils
 from catalog.common import RecordTypes
 from collections import OrderedDict
 from finances.models import PersonalWalletRecord, GroupWalletRecord
@@ -55,9 +55,9 @@ class CategoryView(BasicViewOptions, views.TemplateView):
 
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
-        context['expense_categories'] = get_category_tree(category_type=RecordTypes.EXPENSE)
-        context['income_categories'] = get_category_tree(category_type=RecordTypes.INCOME)
-        context['transfer_categories'] = get_category_tree(category_type=RecordTypes.TRANSFER)
+        context['expense_categories'] = utils.get_category_tree(category_type=RecordTypes.EXPENSE)
+        context['income_categories'] = utils.get_category_tree(category_type=RecordTypes.INCOME)
+        context['transfer_categories'] = utils.get_category_tree(category_type=RecordTypes.TRANSFER)
 
         return context
 
