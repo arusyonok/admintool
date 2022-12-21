@@ -18,6 +18,10 @@ class AbstractRecord(models.Model):
     created_at = models.DateTimeField(auto_now_add=True)
     updated_at = models.DateTimeField(auto_now=True)
 
+    # used when importing records, some records might not be confirmed (False) unless the user confirms it
+    # otherwise always True
+    import_confirmed = models.BooleanField(default=True)
+
     class Meta:
         abstract = True
 
