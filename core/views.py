@@ -1,16 +1,20 @@
+import calendar
 import json
 import typing
-import calendar
-
-from django.urls import reverse
-from django.views import generic as views
-from django.contrib.auth.mixins import LoginRequiredMixin
-from django.db.models import F, Count
-from core import utils
-from catalog.common import RecordTypes
 from collections import OrderedDict
-from finances.models import PersonalWalletRecord, GroupWalletRecord
 from dataclasses import dataclass
+from datetime import datetime
+
+from django.contrib.auth.mixins import LoginRequiredMixin
+from django.core.files.storage import FileSystemStorage
+from django.db.models import Count, F
+from django.urls import reverse, reverse_lazy
+from django.views import generic as views
+
+from catalog.common import RecordTypes
+from core import utils
+from core.forms import ImportFileUploadForm
+from finances.models import GroupWalletRecord, PersonalWalletRecord
 
 
 class RecordsGroupingType:
@@ -355,3 +359,32 @@ class StatisticsView(BasicViewOptions, views.TemplateView):
             }]
         }
         return datasets
+
+
+class ImportWalletRecordsView(BasicViewOptions, views.FormView):
+    template_name = 'import.html'
+    header_title = "Import"
+    form_class = ImportFileUploadForm
+    success_url = reverse_lazy("import-wallet-records")
+
+    def form_valid(self, form):
+        file = form.files.get("import_file")
+        wallet_id = form.data.get("wallet_id")
+        delimiter = form.data.get("delimiter")
+        csv_dict = self.get_dict_from_csv_file(file, wallet_id, delimiter)
+        utils.process_imported_data(csv_dict, wallet_id)
+        return super(ImportWalletRecordsView, self).form_valid(form)
+
+    def get_dict_from_csv_file(self, file, wallet_id, delimiter):
+        fs = FileSystemStorage()
+        import_file_name = f"import_data_wallet_id_{wallet_id}_{datetime.utcnow().isoformat()}.csv"
+        fs.save(import_file_name, file)
+        file_path = fs.path(import_file_name)
+        csv_dict = utils.read_csv_file_into_dict(file_path, delimiter)
+        fs.delete(import_file_name)
+        return csv_dict
+
+    def get_form_kwargs(self):
+        kwargs = super().get_form_kwargs()
+        kwargs['wallets'] = self.request.user.wallet_set.all()
+        return kwargs

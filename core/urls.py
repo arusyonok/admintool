@@ -35,6 +35,7 @@ urlpatterns = [
     url(r'^admin/', admin.site.urls),
     url(r'^dashboard', core_views.DashboardView.as_view(), name='dashboard'),
     url(r'^categories', core_views.CategoryView.as_view(), name='categories'),
+    url(r'^import-wallet-records/$', core_views.ImportWalletRecordsView.as_view(), name='import-wallet-records'),
     url(r'^statistics/',  include((statistics_urls, "statistics"), namespace="statistics")),
     url(r'^finances/', include('finances.urls')),
     url(r'^accounts/', include('accounts.urls')),

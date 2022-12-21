@@ -1,0 +1,102 @@
+{% extends "layouts/index.html" %}
+{% load static from static %}
+
+{% block content %}
+
+  {% include "layouts/content_header.html" with header_title=header_title %}
+
+  <!-- Main content -->
+  <section class="content">
+    <div class="container-fluid">
+      <div class="row">
+        <div class="col-12">
+          <form method="post" action="{% url 'import-wallet-records' %}" enctype="multipart/form-data">
+            {% csrf_token %}
+            <div class="card card-outline card-info">
+              <div class="card-header">
+                <h3 class="card-title">Import</h3>
+              </div>
+              <div class="card-body">
+                <p>Import data in the form of <code>.csv</code> files to the selected wallet.</p>
+                {{ form.errors }}
+                <div class="form-group">
+                  <label for="{{ form.wallet_id.id_for_label }}">Select either Personal or Group wallet</label>
+                  <select class="form-control" id="{{ form.wallet_id.id_for_label }}" name="{{ form.wallet_id.name }}">
+                    {% for wallet in form.wallet_id.field.choices %}
+                    <option value="{{ wallet.0 }}">{{ wallet.1 }}</option>
+                    {% endfor %}
+                  </select>
+                </div>
+                <div class="row">
+                  <div class="col-md-4">
+                    <div class="form-group">
+                      <label for="{{ form.import_file.id_for_label }}">File input</label>
+                      <div class="input-group">
+                        <div class="custom-file">
+                          <input type="file" class="custom-file-input" id="{{ form.import_file.id_for_label }}" name="{{ form.import_file.name}}" />
+                          <label class="custom-file-label" for="{{ form.import_file.id_for_label }}">Choose file</label>
+                        </div>
+                      </div>
+                    </div>
+                  </div>
+                  <div class="col-md-4">
+                    <div class="form-group">
+                      <label for="{{ form.delimiter.id_for_label }}">Choose the delimiter</label>
+                      <select class="form-control" id="{{ form.delimiter.id_for_label }}" name="{{ form.delimiter.name }}">
+                        {% for value in form.delimiter.field.choices %}
+                        <option value="{{ value.0 }}">{{ value.1 }}</option>
+                        {% endfor %}
+                      </select>
+                    </div>
+                  </div>
+                  <div class="col-md-4">
+                    <div class="form-group">
+                      <label for="{{ form.import_origin.id_for_label }}">Choose Import Origin</label>
+                      <select class="form-control" id="{{ form.import_origin.id_for_label }}" name="{{ form.import_origin.name }}">
+                        {% for value in form.import_origin.field.choices %}
+                        <option value="{{ value.0 }}">{{ value.1 }}</option>
+                        {% endfor %}
+                      </select>
+                    </div>
+                  </div>
+                </div>
+              </div>
+              <div class="card-footer">
+                <button type="submit" class="btn btn-info">Submit</button>
+              </div>
+            </div>
+          </form>
+        </div>
+      </div>
+    </div><!-- /.container-fluid -->
+  </section>
+  <!-- /.content -->
+{% endblock %}
+
+{% block javascript %}
+<!-- dropzonejs -->
+<script src="{% static 'plugins/dropzone/min/dropzone.min.js' %}"></script>
+<!-- bs-custom-file-input -->
+<script src="{% static 'plugins/bs-custom-file-input/bs-custom-file-input.min.js' %}"></script>
+
+<!-- Page specific script -->
+<script>
+  $(function () {
+    bsCustomFileInput.init();
+
+    Dropzone.options.myAwesomeDropzone = {
+      paramName: "file",
+      maxFilesize: 5, // MB
+      uploadMultiple: false,
+      accept: function(file, done) {
+      console.log(file)
+      console.log(done)
+        if (file.name == "justinbieber.jpg") {
+          done("Naha, you don't.");
+        }
+        else { done(); }
+      }
+    };
+  });
+</script>
+{% endblock %}

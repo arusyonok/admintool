@@ -99,6 +99,12 @@
             </ul>
           </li>
           {% endfor %}
+          <li class="nav-item">
+            <a href="{% url 'import-wallet-records' %}" class="nav-link {% if url_name == 'import-wallet' %}active{% endif %}">
+              <i class="fas fa-file-import nav-icon"></i>
+              <p>Import</p>
+            </a>
+          </li>
         </ul>
       </nav>
       <!-- /.sidebar-menu -->
