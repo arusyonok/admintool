@@ -365,19 +365,19 @@ class ImportWalletRecordsView(BasicViewOptions, views.FormView):
     template_name = 'import.html'
     header_title = "Import"
     form_class = ImportFileUploadForm
-    success_url = reverse_lazy("import-wallet-records")
+    wallet_id = None
 
     def form_valid(self, form):
         file = form.files.get("import_file")
-        wallet_id = form.data.get("wallet_id")
+        self.wallet_id = form.data.get("wallet_id")
         delimiter = form.data.get("delimiter")
-        csv_dict = self.get_dict_from_csv_file(file, wallet_id, delimiter)
-        utils.process_imported_data(csv_dict, wallet_id)
+        csv_dict = self.get_dict_from_csv_file(file, delimiter)
+        utils.process_imported_data(csv_dict, self.wallet_id)
         return super(ImportWalletRecordsView, self).form_valid(form)
 
-    def get_dict_from_csv_file(self, file, wallet_id, delimiter):
+    def get_dict_from_csv_file(self, file, delimiter):
         fs = FileSystemStorage()
-        import_file_name = f"import_data_wallet_id_{wallet_id}_{datetime.utcnow().isoformat()}.csv"
+        import_file_name = f"import_data_wallet_id_{self.wallet_id}_{datetime.utcnow().isoformat()}.csv"
         fs.save(import_file_name, file)
         file_path = fs.path(import_file_name)
         csv_dict = utils.read_csv_file_into_dict(file_path, delimiter)
@@ -388,3 +388,6 @@ class ImportWalletRecordsView(BasicViewOptions, views.FormView):
         kwargs = super().get_form_kwargs()
         kwargs['wallets'] = self.request.user.wallet_set.all()
         return kwargs
+
+    def get_success_url(self):
+        return reverse_lazy("organize-imports", kwargs={"wallet_id": self.wallet_id})
