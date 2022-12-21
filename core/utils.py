@@ -1,6 +1,6 @@
 import csv
 
-from django.db.models import Q
+from django.db.models import Q, F, Value, CharField
 
 from datetime import datetime
 from catalog.models import Category, SubCategory, SubCategoryKeywords
@@ -126,7 +126,9 @@ def process_group_wallet_data(csv_dict, wallet):
 
 
 def find_sub_category(title, tricount_category=None):
-    keywords = SubCategoryKeywords.objects.filter(keyword__in=title.lower().split())
+    keywords = SubCategoryKeywords.objects.annotate(
+        title_string=Value(title, output_field=CharField())
+    ).filter(title_string__icontains=F("keyword"))
     category_name = TRICOUNT_CATEGORY_MAPPING.get(tricount_category, None)
 
     if category_name:
