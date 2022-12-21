@@ -265,3 +265,31 @@ class GroupBalanceView(BasicViewOptions, views.TemplateView):
             ]
         }
         return datasets
+
+
+class OrganizeImportedRecords(BasicViewOptions, views.TemplateView, WalletViewDetails):
+    template_name = 'organize_imports.html'
+    header_title = "Organize Imports"
+
+    def get_context_data(self, **kwargs):
+        context = super().get_context_data(**kwargs)
+        self.wallet = self.get_wallet_or_404()
+        grouped_records = self.get_records_to_group()
+        context['grouped_records'] = grouped_records
+        return context
+
+    def get_records_to_group(self):
+        if self.wallet.is_group_wallet:
+            records = GroupWalletRecord.objects.filter(import_confirmed=False, group_wallet=self.wallet)
+        else:
+            records = PersonalWalletRecord.objects.filter(import_confirmed=False, personal_wallet=self.wallet)
+
+        grouped_records = {}
+        for record in records:
+            title = record.title
+            if title not in grouped_records.keys():
+                grouped_records[title] = []
+
+            grouped_records[title].append(record)
+
+        return grouped_records

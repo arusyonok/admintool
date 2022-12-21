@@ -49,3 +49,12 @@ class Wallet(models.Model):
     @property
     def is_personal_wallet(self):
         return True if self.users.count() == 1 else False
+
+    @property
+    def has_unconfirmed_records(self):
+        if self.is_personal_wallet:
+            unconfirmed_records = self.personalwalletrecord_set.filter(import_confirmed=False)
+        else:
+            unconfirmed_records = self.groupwalletrecord_set.filter(import_confirmed=False)
+
+        return True if unconfirmed_records.exists() else False

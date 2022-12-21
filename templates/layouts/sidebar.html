@@ -68,6 +68,15 @@
                   <p>Incomes</p>
                 </a>
               </li>
+              {% if wallet.has_unconfirmed_records %}
+              <li class="nav-item">
+                <a href="{% url 'organize-imports' wallet.id %}"
+                   class="nav-link">
+                  <i class="far fa-circle nav-icon"></i>
+                  <p>Organize Imports</p>
+                </a>
+              </li>
+              {% endif %}
             </ul>
           </li>
           {% endfor %}
@@ -96,6 +105,15 @@
                   <p>Balance</p>
                 </a>
               </li>
+              {% if wallet.has_unconfirmed_records %}
+              <li class="nav-item">
+                <a href="{% url 'organize-imports' wallet.id %}"
+                   class="nav-link">
+                  <i class="far fa-circle nav-icon"></i>
+                  <p>Organize Imports</p>
+                </a>
+              </li>
+              {% endif %}
             </ul>
           </li>
           {% endfor %}

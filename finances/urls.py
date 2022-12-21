@@ -29,5 +29,6 @@ urlpatterns = [
     url(r'personal_wallet/(?P<wallet_id>[0-9]+)/expenses/', include((expenses_urls, "finances"), namespace="personal-expenses")),
     url(r'personal_wallet/(?P<wallet_id>[0-9]+)/incomes/',  include((incomes_urls, "finances"), namespace="personal-incomes")),
     url(r'group_wallet/(?P<wallet_id>[0-9]+)/expenses/', include((group_expenses_urls, "finances"), namespace='group-expenses')),
-    url(r'group_wallet/(?P<wallet_id>[0-9]+)/balance', views.GroupBalanceView.as_view(), name='group-balance')
+    url(r'group_wallet/(?P<wallet_id>[0-9]+)/balance', views.GroupBalanceView.as_view(), name='group-balance'),
+    url(r'organize-imports/(?P<wallet_id>[0-9]+)/', views.OrganizeImportedRecords.as_view(), name='organize-imports'),
 ]
