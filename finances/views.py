@@ -268,7 +268,7 @@ class GroupBalanceView(BasicViewOptions, views.TemplateView):
 
 
 class OrganizeImportedRecords(BasicViewOptions, views.TemplateView, WalletViewDetails):
-    template_name = 'organize_imports.html'
+    template_name = 'finances/organize_imports.html'
     header_title = "Organize Imports"
 
     def get_context_data(self, **kwargs):
