@@ -1,10 +1,13 @@
 $(document).ready(function() {
-    $("#category_select").change(function() {
-        var parent_id = $(this).val();
-        $("#id_sub_category").children().not(':first').hide()
-        $("#id_sub_category").children("[parent_id="+ parent_id +"]").show()
-        $("#id_sub_category").val($("#id_sub_category option:selected").val());
-    }).change();
+    $(".category_select").change(function() {
+        var category_id = $(this).val();
+        var parent_form_div = $(this).parent().closest("form")
+        var sub_categories_select = parent_form_div.find(".sub_category")
+
+        sub_categories_select.children().not(":first").hide()
+        sub_categories_select.children("[parent_id="+ category_id +"]").show()
+        sub_categories_select.val(sub_categories_select.find(':first').val())
+    });
 
     $("#delete-confirmation-modal").on("shown.bs.modal", function(event) {
         var relatedItem = $(event.relatedTarget);
