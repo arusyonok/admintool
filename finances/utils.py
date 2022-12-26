@@ -8,6 +8,10 @@ from django.db.models import OuterRef, Q, QuerySet, Subquery, Sum
 from .models import GroupWalletRecord, Balance
 
 
+def is_ajax(request):
+    return request.META.get('HTTP_X_REQUESTED_WITH') == 'XMLHttpRequest'
+
+
 @dataclass
 class SubGroupedPeopleAndRecords:
     people: list
