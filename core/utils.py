@@ -59,9 +59,7 @@ def process_profile(name_string):
     return False
 
 
-def process_imported_data(csv_dict, wallet_id):
-    wallet = Wallet.objects.get(id=wallet_id)
-
+def process_imported_data(csv_dict, wallet):
     if wallet.is_group_wallet:
         process_group_wallet_data(csv_dict, wallet)
 
