@@ -8,8 +8,12 @@
   <section class="content">
     <div class="container-fluid">
       <div class="row">
-        {% for title, grouped_values in grouped_records.items %}
         <section class="col-md-6">
+        {% for title, grouped_values in grouped_records.items %}
+        {% if forloop.counter == grouped_records|midway %}
+        </section>
+        <section class="col-md-6">
+        {% endif %}
           <div class="card card-outline card-info">
             <div class="card-header">
               <h3 class="card-title">Title: <i>{{ title }}</i></h3>
@@ -21,6 +25,7 @@
                 <tr>
                   <td>{{ record.title }}</td>
                   <td>{{ record.amount|floatformat:2|currency }}</td>
+                  <td>{{ record.date }}</td>
                   <td>
                     <a class="btn btn-info btn-sm" href="#"><i class="fas fa-pencil-alt"></i></a>
                     <a class="btn btn-danger btn-sm" href="#"><i class="fas fa-times"></i></a>
@@ -30,11 +35,88 @@
                 </tbody>
               </table>
             </div>
+            <div class="card-footer">
+              <form method="post" class="sub_category_bulk_update">
+                {% csrf_token %}
+                <div class="row">
+                  <div class="col-3 text-center">
+                    <select class="custom-select form-control record_types">
+                      <option>---------</option>
+                      {% for type_name, type_key in record_types.items %}
+                      <option value="{{ type_key }}">{{ type_name }}</option>
+                      {% endfor %}
+                    </select>
+                  </div>
+                  <div class="col-3 text-center">
+                    <select class="custom-select form-control category_select">
+                      <option>---------</option>
+                      {% for category in categories %}
+                      <option value="{{ category.id }}" record_type_id="{{ category.type }}" style="display: none">{{ category.name }}</option>
+                      {% endfor %}
+                    </select>
+                  </div>
+                  <div class="col-3 text-center">
+                    <select class="custom-select form-control sub_category" id="{{ form.sub_category.id_for_label }}" name="{{ form.sub_category.name }}">
+                      <option>---------</option>
+                      {% for sub in form.sub_category.field.queryset %}
+                      <option value="{{ sub.id }}" parent_id="{{ sub.parent.id }}" style="display: none">{{ sub }}</option>
+                      {% endfor %}
+                    </select>
+                  </div>
+                  <div class="col-3 text-center">
+                    {% for record in grouped_values %}
+                    <input type="hidden" class="form-control" name="{{ form.records.name }}" value="{{ record.id }}" />
+                    {% endfor %}
+                    <button type="submit" class="btn btn-success float-right">
+                      <i class="fas fa-check"></i> Update all items
+                    </button>
+                  </div>
+                </div>
+              </form>
+            </div>
           </div>
-        </section>
         {% endfor %}
+        </section>
       </div>
     </div><!-- /.container-fluid -->
   </section>
   <!-- /.content -->
+{% endblock %}
+
+
+{% block javascript %}
+<script>
+    $(".record_types").change(function() {
+        var record_type_id = $(this).val();
+        var parent_form_div = $(this).parent().closest("form")
+        var categories_select = parent_form_div.find(".category_select")
+
+        categories_select.children().not(":first").hide()
+        categories_select.children("[record_type_id="+ record_type_id +"]").show()
+        categories_select.val(categories_select.find(':first').val())
+
+        var sub_categories_select = parent_form_div.find(".sub_category")
+        sub_categories_select.children().not(":first").hide()
+        sub_categories_select.val(sub_categories_select.find(':first').val())
+    });
+
+    $('.sub_category_bulk_update').submit( function(e) {
+        e.preventDefault();
+        var serializedData = $(this).serialize();
+        var parent_card = $(this).parent().closest(".card");
+        var post_url = "{% url request.resolver_match.url_name request.resolver_match.kwargs.wallet_id %}"
+        $.ajax({
+            type: 'POST',
+            url: post_url,
+            data: serializedData,
+            success: function (response) {
+              parent_card.fadeOut("slow", function() { $(this).remove(); });
+            },
+            error: function (response) {
+                // console.log(response['responseJSON']['errors'])
+                // TODO: do error handling
+            }
+        })
+    });
+</script>
 {% endblock %}

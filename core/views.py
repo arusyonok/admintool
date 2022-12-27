@@ -390,4 +390,9 @@ class ImportWalletRecordsView(BasicViewOptions, views.FormView):
         return kwargs
 
     def get_success_url(self):
-        return reverse_lazy("organize-imports", kwargs={"wallet_id": self.wallet.id})
+        if self.wallet.is_personal_wallet:
+            success_view = "organize-personal-imports"
+        else:
+            success_view = "organize-group-imports"
+
+        return reverse_lazy(success_view, kwargs={"wallet_id": self.wallet.id})

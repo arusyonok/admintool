@@ -70,7 +70,7 @@
               </li>
               {% if wallet.has_unconfirmed_records %}
               <li class="nav-item">
-                <a href="{% url 'organize-imports' wallet.id %}"
+                <a href="{% url 'organize-personal-imports' wallet.id %}"
                    class="nav-link">
                   <i class="far fa-circle nav-icon"></i>
                   <p>Organize Imports</p>
@@ -107,7 +107,7 @@
               </li>
               {% if wallet.has_unconfirmed_records %}
               <li class="nav-item">
-                <a href="{% url 'organize-imports' wallet.id %}"
+                <a href="{% url 'organize-group-imports' wallet.id %}"
                    class="nav-link">
                   <i class="far fa-circle nav-icon"></i>
                   <p>Organize Imports</p>

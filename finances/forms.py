@@ -130,3 +130,17 @@ class GroupExpenseUpdateForm(forms.ModelForm):
         if date > datetime.date.today():
             raise forms.ValidationError("The date cannot be in the future!")
         return date
+
+
+class BulkUpdateRecordsForm(forms.Form):
+    sub_category = forms.ModelChoiceField(queryset=SubCategory.objects.all())
+
+
+class BulkUpdatePersonalRecordsForm(BulkUpdateRecordsForm):
+    records = forms.ModelMultipleChoiceField(queryset=PersonalWalletRecord.objects.all(),
+                                             widget=forms.MultipleHiddenInput)
+
+
+class BulkUpdateGroupRecordsForm(BulkUpdateRecordsForm):
+    records = forms.ModelMultipleChoiceField(queryset=GroupWalletRecord.objects.all(),
+                                             widget=forms.MultipleHiddenInput)

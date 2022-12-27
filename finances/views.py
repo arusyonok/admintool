@@ -3,6 +3,7 @@ import json
 from django.http import Http404
 from django.urls import reverse_lazy
 from django.views import generic as views
+from django.http import JsonResponse
 
 from accounts.models import Wallet
 from catalog.common import RecordTypes, WalletType
@@ -11,7 +12,7 @@ from core.views import BasicViewOptions
 
 from . import forms
 from .models import GroupWalletRecord, PersonalWalletRecord
-from .utils import get_balances
+from .utils import get_balances, is_ajax
 
 
 class WalletViewDetails:
@@ -267,23 +268,23 @@ class GroupBalanceView(BasicViewOptions, views.TemplateView):
         return datasets
 
 
-class OrganizeImportedRecords(BasicViewOptions, views.TemplateView, WalletViewDetails):
+class OrganizeImportedRecords(BasicViewOptions, views.FormView, WalletViewDetails):
     template_name = 'finances/organize_imports.html'
-    header_title = "Organize Imports"
+    header_title = "Confirm Imports and Assign Sub Categories"
 
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
         self.wallet = self.get_wallet_or_404()
-        grouped_records = self.get_records_to_group()
+        grouped_records = self.get_grouped_records()
         context['grouped_records'] = grouped_records
+        context['categories'] = Category.objects.all()
+        context['record_types'] = RecordTypes.DICT
         return context
 
-    def get_records_to_group(self):
-        if self.wallet.is_group_wallet:
-            records = GroupWalletRecord.objects.filter(import_confirmed=False, group_wallet=self.wallet)
-        else:
-            records = PersonalWalletRecord.objects.filter(import_confirmed=False, personal_wallet=self.wallet)
+    def get_grouped_records(self):
+        raise NotImplemented()
 
+    def _group_records(self, records):
         grouped_records = {}
         for record in records:
             title = record.title
@@ -293,3 +294,33 @@ class OrganizeImportedRecords(BasicViewOptions, views.TemplateView, WalletViewDe
             grouped_records[title].append(record)
 
         return grouped_records
+
+    def update_records_sub_category(self, form):
+        records = form.cleaned_data["records"]
+        sub_category = form.cleaned_data["sub_category"]
+        records.update(sub_category=sub_category, import_confirmed=True)
+
+    def post(self, request, *args, **kwargs):
+        form = self.get_form()
+        if form.is_valid() and is_ajax(request):
+            self.update_records_sub_category(form)
+            return JsonResponse({}, status=200)
+        else:
+            return JsonResponse({"errors": form.errors}, status=400)
+
+
+class OrganizeImportedPersonalRecordsView(OrganizeImportedRecords):
+    form_class = forms.BulkUpdatePersonalRecordsForm
+
+    def get_grouped_records(self):
+        records = PersonalWalletRecord.objects.filter(import_confirmed=False, personal_wallet=self.wallet)
+        return self._group_records(records)
+
+
+class OrganizeImportedGroupRecordsView(OrganizeImportedRecords):
+    form_class = forms.BulkUpdateGroupRecordsForm
+
+    def get_grouped_records(self):
+        records = GroupWalletRecord.objects.filter(import_confirmed=False, group_wallet=self.wallet)
+
+        return self._group_records(records)

@@ -13,3 +13,8 @@ def currency(value):
     value = mark_safe(f'&euro; {value}')
 
     return value
+
+
+@register.filter
+def midway(list_of_objects):
+    return int(len(list_of_objects) / 2)
