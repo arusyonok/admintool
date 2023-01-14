@@ -7,7 +7,7 @@ STATIC_ROOT = os.path.join(BASE_DIR, 'assets')
 STATICFILES_STORAGE = "whitenoise.storage.CompressedStaticFilesStorage"
 
 
-ALLOWED_HOSTS = ["financekorte.herokuapp.com"]
+ALLOWED_HOSTS = ["*.herokuapp.com"]
 
 
 DATABASES = {
