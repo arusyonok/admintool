@@ -27,21 +27,15 @@
           <!-- Add icons to the links using the .nav-icon class
                with font-awesome or any other icon font library -->
           <li class="nav-item">
-            <a href="{% url 'dashboard' %}" class="nav-link {% if url_name == 'dashboard' %}active{% endif %}">
-              <i class="nav-icon fas fa-house-user"></i>
-              <p>Dashboard</p>
+            <a href="{% url 'statistics:view' %}" class="nav-link {% if url_name == 'statistics' %}active{% endif %}">
+              <i class="nav-icon fas fa-chart-pie"></i>
+              <p>Statistics</p>
             </a>
           </li>
           <li class="nav-item">
             <a href="{% url 'categories' %}" class="nav-link {% if url_name == 'categories' %}active{% endif %}">
               <i class="nav-icon fas fa-list-alt"></i>
               <p>Categories</p>
-            </a>
-          </li>
-          <li class="nav-item">
-            <a href="{% url 'statistics:view' %}" class="nav-link {% if url_name == 'statistics' %}active{% endif %}">
-              <i class="nav-icon fas fa-chart-pie"></i>
-              <p>Statistics</p>
             </a>
           </li>
           {% for wallet in user.personal_wallets %}

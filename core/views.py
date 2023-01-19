@@ -48,11 +48,6 @@ class BasicViewOptions(LoginRequiredMixin, views.base.ContextMixin):
         return context
 
 
-class DashboardView(BasicViewOptions, views.TemplateView):
-    template_name = 'dashboard.html'
-    header_title = "Dashboard"
-
-
 class CategoryView(BasicViewOptions, views.TemplateView):
     template_name = 'categories.html'
     header_title = "Categories"

@@ -4,7 +4,7 @@ from django.urls import reverse_lazy
 
 class LoginView(views.LoginView):
     template_name = "accounts/login.html"
-    next_page = reverse_lazy("dashboard")
+    next_page = reverse_lazy("statistics")
 
 
 class LogoutView(views.LogoutView):
